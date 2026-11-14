@@ -1,5 +1,6 @@
 import http from "node:http";
-import { readFileSync } from "node:fs";
+import { stat } from "node:fs/promises";
+import { createReadStream, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,7 +20,21 @@ function loadEnv(file) {
 }
 function requireText(file) { return readFileSync(file, "utf8"); }
 
+function sendFile(req, res) {
+  const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
+  const clean = path.posix.join("/public", requestPath);
+  const file = path.normalize(path.join(root, clean));
+  stat(file).then(() => {
+    const type = file.endsWith(".css") ? "text/css" : file.endsWith(".js") ? "application/javascript" : "text/html";
+    res.writeHead(200, { "content-type": `${type}; charset=utf-8` }); createReadStream(file).pipe(res);
+  }).catch(() => {
+    res.writeHead(404, { "content-type": "text/plain" });
+    res.end("Not found");
+  });
+}
+
 http.createServer((req, res) => {
-  res.writeHead(200, { "content-type": "text/plain" });
-  res.end("Mira API Server");
+  if (req.method === "GET") return sendFile(req, res);
+  res.writeHead(405, { "content-type": "text/plain" });
+  res.end("Method not allowed");
 }).listen(port, () => console.log(`Mira is running at http://localhost:${port}`));
