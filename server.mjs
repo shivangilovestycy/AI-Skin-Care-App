@@ -24,6 +24,10 @@ function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
   const clean = path.posix.join("/public", requestPath);
   const file = path.normalize(path.join(root, clean));
+  if (!file.startsWith(root) || !file.startsWith(path.join(root, "public"))) {
+    res.writeHead(403, { "content-type": "text/plain" });
+    return res.end("Forbidden");
+  }
   stat(file).then(() => {
     const type = file.endsWith(".css") ? "text/css" : file.endsWith(".js") ? "application/javascript" : "text/html";
     res.writeHead(200, { "content-type": `${type}; charset=utf-8` }); createReadStream(file).pipe(res);
