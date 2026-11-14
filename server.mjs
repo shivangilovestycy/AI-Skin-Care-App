@@ -43,6 +43,7 @@ function sendFile(req, res) {
 }
 
 http.createServer((req, res) => {
+  if (req.method === "GET" && req.url === "/api/catalog") return json(res, 200, { products: catalog });
   if (req.method === "GET") return sendFile(req, res);
   json(res, 405, { error: "Method not allowed" });
 }).listen(port, () => console.log(`Mira is running at http://localhost:${port}`));
