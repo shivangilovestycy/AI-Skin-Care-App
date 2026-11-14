@@ -20,25 +20,23 @@ function loadEnv(file) {
 }
 function requireText(file) { return readFileSync(file, "utf8"); }
 
+function json(res, status, value) {
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify(value));
+}
+
 function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
   const clean = path.posix.join("/public", requestPath);
   const file = path.normalize(path.join(root, clean));
-  if (!file.startsWith(root) || !file.startsWith(path.join(root, "public"))) {
-    res.writeHead(403, { "content-type": "text/plain" });
-    return res.end("Forbidden");
-  }
+  if (!file.startsWith(root) || !file.startsWith(path.join(root, "public"))) return json(res, 403, { error: "Forbidden" });
   stat(file).then(() => {
     const type = file.endsWith(".css") ? "text/css" : file.endsWith(".js") ? "application/javascript" : "text/html";
     res.writeHead(200, { "content-type": `${type}; charset=utf-8` }); createReadStream(file).pipe(res);
-  }).catch(() => {
-    res.writeHead(404, { "content-type": "text/plain" });
-    res.end("Not found");
-  });
+  }).catch(() => json(res, 404, { error: "Not found" }));
 }
 
 http.createServer((req, res) => {
   if (req.method === "GET") return sendFile(req, res);
-  res.writeHead(405, { "content-type": "text/plain" });
-  res.end("Method not allowed");
+  json(res, 405, { error: "Method not allowed" });
 }).listen(port, () => console.log(`Mira is running at http://localhost:${port}`));
