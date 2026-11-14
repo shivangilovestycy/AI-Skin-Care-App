@@ -85,8 +85,14 @@ function sendFile(req, res) {
     res.writeHead(200, { "content-type": `${type}; charset=utf-8` }); createReadStream(file).pipe(res);
   }).catch(() => json(res, 404, { error: "Not found" }));
 }
-http.createServer((req, res) => {
+http.createServer(async (req, res) => {
   if (req.method === "GET" && req.url === "/api/catalog") return json(res, 200, { products: catalog });
+  if (req.method === "POST" && req.url === "/api/analyze") {
+    let raw = ""; req.on("data", (part) => raw += part); req.on("end", async () => {
+      try { json(res, 200, { analysis: await callNim(JSON.parse(raw || "{}")), catalog }); }
+      catch (error) { json(res, 502, { error: error.message || "Analysis unavailable" }); }
+    }); return;
+  }
   if (req.method === "GET") return sendFile(req, res);
   json(res, 405, { error: "Method not allowed" });
 }).listen(port, () => console.log(`Mira is running at http://localhost:${port}`));
