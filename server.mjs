@@ -33,6 +33,24 @@ function json(res, status, value) {
   res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
   res.end(JSON.stringify(value));
 }
+function demoResult() {
+  return {
+    summary: "This is a demonstration plan. Add your NVIDIA NIM key to analyse a selfie with the configured vision model.",
+    visibleObservations: ["No live image analysis is running yet"],
+    careLevel: "routine",
+    caution: "Stop a product if it stings, burns, or causes swelling. Seek clinician advice for persistent or severe concerns.",
+    routine: [
+      { step: "Morning cleanse", guidance: "Use a gentle cleanser if your skin feels oily or after exercise" },
+      { step: "Toner (optional)", guidance: "Choose a simple hydrating toner; skip it if it causes irritation" },
+      { step: "Serum", guidance: "Introduce one active at a time and patch test first" },
+      { step: "Moisturiser", guidance: "Use a fragrance-free barrier-supporting moisturiser" },
+      { step: "Sunscreen", guidance: "Use broad-spectrum SPF 30+ and reapply as directed" },
+      { step: "Night routine", guidance: "Keep the routine simple; add treatment only gradually" }
+    ],
+    productCategories: ["Cleanser", "Serum", "Moisturiser", "Sunscreen"],
+    questions: ["Do you have any known allergies or a current prescription treatment?", "Has this concern been painful, sudden, or persistent?"]
+  };
+}
 
 function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
