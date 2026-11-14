@@ -51,7 +51,30 @@ function demoResult() {
     questions: ["Do you have any known allergies or a current prescription treatment?", "Has this concern been painful, sudden, or persistent?"]
   };
 }
-
+async function callNim(payload) {
+  if (!process.env.NVIDIA_API_KEY) return demoResult();
+  const imagePart = payload.imageData ? [{ type: "image_url", image_url: { url: payload.imageData } }] : [];
+  const request = {
+    model: nimModel,
+    temperature: 0.2,
+    top_p: 0.95,
+    max_tokens: 1500,
+    messages: [
+      { role: "system", content: safetyPrompt },
+      { role: "user", content: [{ type: "text", text: `Declared age range: ${payload.ageRange || "not provided"}. Goals: ${payload.goals || "not provided"}. Sensitivities: ${payload.sensitivities || "not provided"}. Budget: ${payload.budget || "not provided"}. Analyse the attached face photo cautiously.` }, ...imagePart] }
+    ]
+  };
+  const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+    method: "POST",
+    headers: { authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "content-type": "application/json" },
+    body: JSON.stringify(request)
+  });
+  if (!response.ok) throw new Error(`NVIDIA NIM returned ${response.status}`);
+  const body = await response.json();
+  const text = body.choices?.[0]?.message?.content || "";
+  const parsed = JSON.parse(text.replace(/^```json\s*|\s*```$/g, ""));
+  return parsed;
+}
 function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
   const clean = path.posix.join("/public", requestPath);
@@ -62,7 +85,6 @@ function sendFile(req, res) {
     res.writeHead(200, { "content-type": `${type}; charset=utf-8` }); createReadStream(file).pipe(res);
   }).catch(() => json(res, 404, { error: "Not found" }));
 }
-
 http.createServer((req, res) => {
   if (req.method === "GET" && req.url === "/api/catalog") return json(res, 200, { products: catalog });
   if (req.method === "GET") return sendFile(req, res);
