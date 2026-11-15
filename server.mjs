@@ -51,6 +51,24 @@ function demoResult() {
     questions: ["Do you have any known allergies or a current prescription treatment?", "Has this concern been painful, sudden, or persistent?"]
   };
 }
+
+function extractJson(text) {
+  if (!text) return demoResult();
+  try {
+    const firstBrace = text.indexOf('{');
+    const lastBrace = text.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      const candidate = text.substring(firstBrace, lastBrace + 1);
+      return JSON.parse(candidate);
+    }
+  } catch (err) {
+    console.warn("JSON extraction failed, using fallback:", err);
+  }
+  const fallback = demoResult();
+  if (text && text.trim()) fallback.summary = text.trim();
+  return fallback;
+}
+
 async function callNim(payload) {
   if (!process.env.NVIDIA_API_KEY) return demoResult();
   const imagePart = payload.imageData ? [{ type: "image_url", image_url: { url: payload.imageData } }] : [];
@@ -61,7 +79,7 @@ async function callNim(payload) {
     max_tokens: 1500,
     messages: [
       { role: "system", content: safetyPrompt },
-      { role: "user", content: [{ type: "text", text: `Declared age range: ${payload.ageRange || "not provided"}. Goals: ${payload.goals || "not provided"}. Sensitivities: ${payload.sensitivities || "not provided"}. Budget: ${payload.budget || "not provided"}. Analyse the attached face photo cautiously.` }, ...imagePart] }
+      { role: "user", content: [{ type: "text", text: `Declared age range: ${payload.ageRange || "not provided"}. Goals: ${payload.goals || "not provided"}. Sensitivities: ${payload.sensitivities || "not provided"}. Budget: ${payload.budget || "not provided"}. Analyse the user face image cautiously.` }, ...imagePart] }
     ]
   };
   const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
@@ -72,8 +90,7 @@ async function callNim(payload) {
   if (!response.ok) throw new Error(`NVIDIA NIM returned ${response.status}`);
   const body = await response.json();
   const text = body.choices?.[0]?.message?.content || "";
-  const parsed = JSON.parse(text.replace(/^```json\s*|\s*```$/g, ""));
-  return parsed;
+  return extractJson(text);
 }
 function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
