@@ -13,3 +13,6 @@ selfie.addEventListener('change', () => {
   reader.onload = () => { imageData = reader.result; preview.innerHTML = `<img alt="Selected selfie preview" src="${imageData}">`; };
   reader.readAsDataURL(file);
 });
+function renderProducts(products) {
+  productGrid.innerHTML = products.map(product => `<article class="product"><p class="product-type">${product.category}</p><div class="packshot">VERIFIED ASSET SLOT</div><h3>${product.name}</h3><p>${product.match}</p><a href="${product.url}" target="_blank" rel="noreferrer">${product.retailer} →</a></article>`).join('');
+}
