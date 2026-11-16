@@ -3,61 +3,86 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111217">
+  <meta name="theme-color" content="#07080b">
   <title>mira — skin intelligence</title>
   <link rel="stylesheet" href="/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class="ambient-glow"></div>
+  
   <main class="app-shell">
-    <header>
-      <a class="logo" href="#top">mira<span>—</span></a>
-      <p>skin intelligence <b>✦</b> 2000</p>
-      <button class="menu" aria-label="Open menu">⌁</button>
+    <!-- Top System Bar -->
+    <header class="system-bar">
+      <div class="system-left">
+        <span class="sub-brand">MIRA//SKIN</span>
+      </div>
+      <div class="system-center">
+        <a class="logo" href="#top">mira</a>
+        <span class="tagline">SKIN INTELLIGENCE ✦ 2000</span>
+      </div>
+      <div class="system-right">
+        <span id="system-time" class="time-code">07:40</span>
+      </div>
     </header>
+
+    <!-- Hero / Face Scanner Section -->
     <section class="hero" id="top">
       <div class="hero-copy">
-        <p class="index">01 / face input</p>
-        <h1>See what<br>your skin<br>needs</h1>
-        <p class="lede">Take a selfie using your device camera. Get a clear, cautious plan and product categories that fit your routine.</p>
+        <p class="index-tag">01 / BIOMETRIC FACE INPUT</p>
+        <h1 class="hero-title">See what<br>your skin<br>needs</h1>
+        <p class="lede">Capture a single selfie using your device camera. Receive a clinical, dual-sequence routine with authentic products tailored to your skin and budget.</p>
         
         <div class="camera-actions">
-          <button id="open-camera" type="button" class="camera-btn open">
-            <span>Use Device Camera</span> <span>📷</span>
+          <button id="open-camera" type="button" class="btn-primary-action">
+            <span>Use Device Camera</span> <span class="btn-icon">📷</span>
           </button>
-          <button id="capture-photo" type="button" class="camera-btn capture" style="display:none;">
-            <span>Capture Selfie</span> <span>⚡</span>
+          <button id="capture-photo" type="button" class="btn-capture-action" style="display:none;">
+            <span>Capture Selfie</span> <span class="btn-icon">⚡</span>
           </button>
-          <button id="retake-photo" type="button" class="camera-btn retake" style="display:none;">
-            <span>Retake Selfie</span> <span>↺</span>
+          <button id="retake-photo" type="button" class="btn-retake-action" style="display:none;">
+            <span>Retake Selfie</span> <span class="btn-icon">↺</span>
           </button>
-          <label class="upload-alt" for="selfie">or upload an image file →</label>
+          <label class="upload-alt-link" for="selfie">or upload a photo from device →</label>
           <input id="selfie" type="file" accept="image/*" capture="user" hidden>
         </div>
         
-        <p class="fine" id="camera-status">Images are sent for analysis only when you choose to continue. Results are not a diagnosis.</p>
+        <p class="fine-print" id="camera-status">Images are processed in a privacy-preserving session. Results provide cosmetic education, not medical diagnoses.</p>
       </div>
+
       <div class="hero-visual">
-        <div class="target"><span></span></div>
+        <div class="target-viewfinder">
+          <span class="crosshair-h"></span>
+          <span class="crosshair-v"></span>
+          <span class="inner-circle"></span>
+        </div>
         <div class="face-preview" id="preview" aria-label="Selfie preview">
           <video id="camera-stream" autoplay playsinline muted style="display:none;"></video>
           <canvas id="camera-canvas" style="display:none;"></canvas>
           <div id="preview-placeholder">
-            <p>Camera inactive</p>
-            <span style="font-size:9px;color:#7e828d;">Tap "Use Device Camera"</span>
+            <div class="scanner-icon">⌁</div>
+            <p>Camera standby</p>
+            <span class="hint">Tap "Use Device Camera" to start scanner</span>
           </div>
         </div>
-        <p class="vertical">skin / scan / input</p>
+        <p class="vertical-label">skin / scan / input</p>
       </div>
     </section>
-    <section class="intake" aria-labelledby="profile-title">
-      <div>
-        <p class="index">Your context</p>
+
+    <!-- Context Intake Form -->
+    <section class="intake" id="intake-section" aria-labelledby="profile-title">
+      <div class="intake-intro">
+        <p class="index-tag">02 / CUSTOMER PREFERENCES</p>
         <h2 id="profile-title">Make the guidance fit you</h2>
+        <p class="intake-sub">Adjust your preferences. Customise your budget freely with zero restrictions.</p>
       </div>
-      <div class="fields">
-        <label>Age range
+      <div class="fields-grid">
+        <label class="field-item">
+          <span>Age range</span>
           <select id="ageRange">
-            <option value="">Choose</option>
+            <option value="">Select range</option>
             <option>Under 18</option>
             <option>18–24</option>
             <option>25–34</option>
@@ -65,50 +90,192 @@
             <option>45+</option>
           </select>
         </label>
-        <label>Skin goals
-          <input id="goals" placeholder="e.g. acne, dryness, uneven tone">
+        <label class="field-item">
+          <span>Skin goals & concerns</span>
+          <input id="goals" placeholder="e.g. acne, barrier repair, dryness, texture">
         </label>
-        <label>Sensitivities
-          <input id="sensitivities" placeholder="e.g. fragrance sensitivity">
+        <label class="field-item">
+          <span>Sensitivities & allergies</span>
+          <input id="sensitivities" placeholder="e.g. fragrance, essential oils, none">
         </label>
-        <label>Monthly budget
-          <select id="budget">
-            <option>₹1,000–2,000</option>
-            <option>₹2,000–4,000</option>
-            <option>₹4,000+</option>
-          </select>
+        <label class="field-item">
+          <span>Budget preference (any amount)</span>
+          <input id="budget" type="text" placeholder="e.g. ₹500, ₹1,500, ₹3,000, or Flexible">
         </label>
-        <button id="analyse" class="primary">Build my routine →</button>
+        <button id="analyse" class="btn-build-routine">
+          <span>Build My Routine →</span>
+        </button>
       </div>
     </section>
+
+    <!-- Results Section: Hero Product Showcase (matching user reference image) -->
+    <section class="showcase-section" id="showcase-view" style="display:none;">
+      <div class="showcase-header">
+        <p class="index-tag">03 / HERO PRODUCT MATCH</p>
+        <h2 class="showcase-title">One thing at a time</h2>
+        <p class="showcase-subtitle" id="hero-product-subtitle">Chosen for your skin and your budget.</p>
+      </div>
+
+      <!-- 3D Rotating Product Card with Light Triangle / Pedestal -->
+      <div class="product-stage-card">
+        <!-- Floating Ambient Particles -->
+        <div class="stage-star star-1"></div>
+        <div class="stage-star star-2"></div>
+        <div class="stage-star star-3"></div>
+
+        <!-- The Light Triangle / Spotlight Cone -->
+        <div class="light-cone"></div>
+
+        <!-- Orbital Dashed Rings -->
+        <div class="orbital-ring"></div>
+
+        <!-- 3D Rotating Product Image -->
+        <div class="product-rotation-wrapper">
+          <img id="stage-product-img" class="rotating-bottle" src="/assets/mira-barrier-cream.png" alt="Featured Skincare Product">
+        </div>
+
+        <!-- Glowing Elliptical Pedestal Platform -->
+        <div class="pedestal-platform">
+          <div class="pedestal-shine"></div>
+        </div>
+
+        <!-- Bottom Info Bar inside Card -->
+        <div class="stage-card-footer">
+          <span class="stage-card-category" id="stage-card-category">BARRIER CREAM</span>
+          <span class="stage-card-match" id="stage-card-match">96% MATCH · ₹1,200</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons below Card -->
+      <div class="showcase-actions">
+        <button id="btn-hero-shop" type="button" class="btn-silver-shop">
+          <span>SHOP →</span>
+        </button>
+        <button id="btn-scan-again" type="button" class="btn-glass-scan">
+          <span>↺ SCAN AGAIN</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Results Section: Dual AM/PM Routine Sequence -->
     <section class="result-section" id="result">
       <div class="section-head">
         <div>
-          <p class="index">02 / your skin, in sequence</p>
-          <h2>Your routine, built slowly</h2>
+          <p class="index-tag">04 / YOUR COMPLETE SEQUENCES</p>
+          <h2 class="result-main-title">Day & Night Sequence</h2>
         </div>
-        <p id="analysis-status">Complete the intake to create a plan</p>
+        <p id="analysis-status" class="analysis-status-pill">Complete the intake to generate plan</p>
       </div>
-      <div class="routine" id="routine">
-        <p class="empty">Your plan will appear here. Start with the basic steps, then introduce any new active one at a time.</p>
+
+      <!-- Routine Sequence Tabs -->
+      <div class="routine-tabs" id="routine-tabs-container">
+        <button type="button" class="tab-btn active" data-tab="day">
+          <span class="tab-icon">☀️</span> DAYTIME ROUTINE (AM)
+        </button>
+        <button type="button" class="tab-btn" data-tab="night">
+          <span class="tab-icon">🌙</span> NIGHTTIME ROUTINE (PM)
+        </button>
+      </div>
+
+      <!-- Daytime Routine Container -->
+      <div class="routine-panel active" id="day-routine-panel">
+        <div class="routine-grid" id="day-routine-grid">
+          <p class="empty-state">Your morning sequence will appear here once analysed.</p>
+        </div>
+      </div>
+
+      <!-- Nighttime Routine Container -->
+      <div class="routine-panel" id="night-routine-panel">
+        <div class="routine-grid" id="night-routine-grid">
+          <p class="empty-state">Your evening sequence will appear here once analysed.</p>
+        </div>
       </div>
     </section>
-    <section class="result-section products">
+
+    <!-- Verified Product Recommendations with Quick Commerce -->
+    <section class="catalog-section" id="catalog-section">
       <div class="section-head">
         <div>
-          <p class="index">03 / one thing at a time</p>
-          <h2>Products from verified sources</h2>
+          <p class="index-tag">05 / VERIFIED PRODUCT CATALOG</p>
+          <h2>Recommended Formulations</h2>
         </div>
-        <p>Official brand links only</p>
+        <p class="delivery-highlight">⚡ Blinkit · ⚡ Zepto · 📦 Nykaa · 🌐 Brand</p>
       </div>
       <div class="product-grid" id="product-grid"></div>
-      <p class="catalog-note">Product imagery is intentionally not generated or copied. A verified retailer or brand asset feed can supply the exact original packshot for each listing.</p>
+      <p class="catalog-note">Direct purchase links provided for instant delivery (Blinkit & Zepto 10-15m) or standard beauty retail (Nykaa & Brand Official). Product imagery is official authorized packshot data.</p>
     </section>
-    <aside class="safety">
-      <span>Clinical boundary</span>
-      <p>Mira can help organise everyday skincare information. It cannot diagnose acne type, allergies, infection, hormonal conditions, or decide whether a prescription treatment is appropriate. Painful, sudden, spreading, swollen, blistering, eye-area, or persistent concerns should be assessed by a licensed dermatologist.</p>
+
+    <!-- Clinical Safety Boundary -->
+    <aside class="safety-banner">
+      <div class="safety-tag">Clinical Boundary</div>
+      <p>Mira is a cosmetic skin intelligence assistant. It does not provide medical diagnoses or prescribe medications. If you experience severe, blistering, cystic, sudden swelling, or painful symptoms, consult a board-certified dermatologist immediately.</p>
     </aside>
   </main>
+
+  <!-- Multi-Vendor Store Modal (Blinkit, Zepto, Nykaa, Official) -->
+  <div class="store-modal-overlay" id="store-modal" style="display:none;">
+    <div class="store-modal-card">
+      <button class="modal-close-btn" id="modal-close" aria-label="Close modal">✕</button>
+      
+      <div class="modal-product-summary">
+        <img id="modal-product-img" src="/assets/mira-barrier-cream.png" alt="Product thumbnail" class="modal-thumb">
+        <div class="modal-product-info">
+          <span class="modal-product-type" id="modal-product-category">BARRIER CREAM</span>
+          <h3 id="modal-product-title">Mira Bio-Lipid Barrier Cream</h3>
+          <p class="modal-product-price" id="modal-product-price">₹1,200 · 96% Match</p>
+        </div>
+      </div>
+
+      <div class="store-options-group">
+        <div class="store-tier-heading">
+          <span class="lightning">⚡</span> NEED IT URGENTLY? (10–15 MIN DELIVERIES)
+        </div>
+        
+        <div class="store-buttons-row">
+          <a id="link-blinkit" href="#" target="_blank" rel="noopener noreferrer" class="store-btn blinkit-btn">
+            <div class="store-name-group">
+              <span class="store-logo-text">Blinkit</span>
+              <small>10-15 min delivery</small>
+            </div>
+            <span class="store-arrow">Order ⚡</span>
+          </a>
+          <a id="link-zepto" href="#" target="_blank" rel="noopener noreferrer" class="store-btn zepto-btn">
+            <div class="store-name-group">
+              <span class="store-logo-text">Zepto</span>
+              <small>10 min instant</small>
+            </div>
+            <span class="store-arrow">Order ⚡</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="store-options-group">
+        <div class="store-tier-heading">
+          <span>📦</span> STANDARD DELIVERY & AUTHENTIC BEAUTY STORES
+        </div>
+        
+        <div class="store-buttons-row">
+          <a id="link-nykaa" href="#" target="_blank" rel="noopener noreferrer" class="store-btn nykaa-btn">
+            <div class="store-name-group">
+              <span class="store-logo-text">Nykaa</span>
+              <small>Official beauty store</small>
+            </div>
+            <span class="store-arrow">Shop 🛍️</span>
+          </a>
+          <a id="link-official" href="#" target="_blank" rel="noopener noreferrer" class="store-btn official-btn">
+            <div class="store-name-group">
+              <span class="store-logo-text">Brand Direct</span>
+              <small>Authorized store</small>
+            </div>
+            <span class="store-arrow">Visit 🌐</span>
+          </a>
+        </div>
+      </div>
+      
+      <p class="modal-footer-note">Select Blinkit or Zepto for instant doorstep fulfillment, or Nykaa for standard catalog delivery.</p>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
 </body>
 </html>

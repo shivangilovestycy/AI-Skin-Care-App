@@ -1,3 +1,9 @@
+/**
+ * MIRA — SKIN INTELLIGENCE CLIENT LOGIC
+ * High-performance, classy, dual AM/PM sequence, 3D rotating showcase, and quick-commerce integrations.
+ */
+
+// DOM Elements: Camera & Input
 const selfie = document.querySelector('#selfie');
 const preview = document.querySelector('#preview');
 const openCameraBtn = document.querySelector('#open-camera');
@@ -7,16 +13,61 @@ const cameraStreamEl = document.querySelector('#camera-stream');
 const cameraCanvas = document.querySelector('#camera-canvas');
 const previewPlaceholder = document.querySelector('#preview-placeholder');
 const cameraStatus = document.querySelector('#camera-status');
+const systemTime = document.querySelector('#system-time');
 
-const analyse = document.querySelector('#analyse');
-const routine = document.querySelector('#routine');
+// DOM Elements: Intake & Analysis
+const analyseBtn = document.querySelector('#analyse');
+const ageRangeInput = document.querySelector('#ageRange');
+const goalsInput = document.querySelector('#goals');
+const sensitivitiesInput = document.querySelector('#sensitivities');
+const budgetInput = document.querySelector('#budget');
+const analysisStatus = document.querySelector('#analysis-status');
+
+// DOM Elements: Showcase Card (Reference Image Match)
+const showcaseView = document.querySelector('#showcase-view');
+const stageProductImg = document.querySelector('#stage-product-img');
+const stageCardCategory = document.querySelector('#stage-card-category');
+const stageCardMatch = document.querySelector('#stage-card-match');
+const heroProductSubtitle = document.querySelector('#hero-product-subtitle');
+const btnHeroShop = document.querySelector('#btn-hero-shop');
+const btnScanAgain = document.querySelector('#btn-scan-again');
+
+// DOM Elements: Routine & Catalog
+const dayRoutineGrid = document.querySelector('#day-routine-grid');
+const nightRoutineGrid = document.querySelector('#night-routine-grid');
+const routineTabsContainer = document.querySelector('#routine-tabs-container');
+const dayPanel = document.querySelector('#day-routine-panel');
+const nightPanel = document.querySelector('#night-routine-panel');
 const productGrid = document.querySelector('#product-grid');
-const status = document.querySelector('#analysis-status');
+
+// DOM Elements: Store Modal
+const storeModal = document.querySelector('#store-modal');
+const modalCloseBtn = document.querySelector('#modal-close');
+const modalProductImg = document.querySelector('#modal-product-img');
+const modalProductCategory = document.querySelector('#modal-product-category');
+const modalProductTitle = document.querySelector('#modal-product-title');
+const modalProductPrice = document.querySelector('#modal-product-price');
+const linkBlinkit = document.querySelector('#link-blinkit');
+const linkZepto = document.querySelector('#link-zepto');
+const linkNykaa = document.querySelector('#link-nykaa');
+const linkOfficial = document.querySelector('#link-official');
 
 let imageData = '';
 let activeMediaStream = null;
+let currentProducts = [];
+let currentHeroProduct = null;
 
-// Stop any active camera stream
+// Real-Time System Clock (07:40 style)
+function updateSystemClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  if (systemTime) systemTime.textContent = `${hours}:${minutes}`;
+}
+setInterval(updateSystemClock, 1000);
+updateSystemClock();
+
+// Stop active camera stream
 function stopCameraStream() {
   if (activeMediaStream) {
     activeMediaStream.getTracks().forEach(track => track.stop());
@@ -27,10 +78,10 @@ function stopCameraStream() {
 // Start device camera
 async function startCamera() {
   stopCameraStream();
-  cameraStatus.textContent = 'Requesting camera access…';
+  cameraStatus.textContent = 'Activating device optical sensor…';
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    cameraStatus.textContent = 'Camera not supported in this browser. Please use the file upload option.';
+    cameraStatus.textContent = 'Camera API not supported in this browser environment. Please upload an image file.';
     return;
   }
 
@@ -59,17 +110,17 @@ async function startCamera() {
     capturePhotoBtn.style.display = 'flex';
     retakePhotoBtn.style.display = 'none';
 
-    cameraStatus.textContent = 'Camera active. Align your face inside the target and tap Capture Selfie.';
+    cameraStatus.textContent = 'Scanner online. Center your face in the circular reticle and capture.';
   } catch (err) {
     console.error('Camera access error:', err);
-    cameraStatus.textContent = 'Camera access was denied or unavailable. You can upload an image file instead.';
+    cameraStatus.textContent = 'Camera permission denied or camera unavailable. You can upload a photo instead.';
   }
 }
 
-// Capture photo from video feed
+// Capture photo from live camera feed
 function capturePhoto() {
   if (!activeMediaStream || !cameraStreamEl.videoWidth) {
-    cameraStatus.textContent = 'Waiting for camera feed to initialize…';
+    cameraStatus.textContent = 'Initializing optical feed, please wait…';
     return;
   }
 
@@ -79,14 +130,14 @@ function capturePhoto() {
   cameraCanvas.height = height;
 
   const ctx = cameraCanvas.getContext('2d');
-  // Mirror frame to match what the user sees
+  // Mirror frame horizontally for natural selfie view
   ctx.translate(width, 0);
   ctx.scale(-1, 1);
   ctx.drawImage(cameraStreamEl, 0, 0, width, height);
 
   imageData = cameraCanvas.toDataURL('image/jpeg', 0.92);
 
-  // Stop camera tracks
+  // Stop camera tracks to save battery
   stopCameraStream();
   cameraStreamEl.style.display = 'none';
 
@@ -106,7 +157,11 @@ function capturePhoto() {
   retakePhotoBtn.style.display = 'flex';
   openCameraBtn.style.display = 'none';
 
-  cameraStatus.textContent = 'Selfie captured! Fill in your preferences and click "Build my routine →".';
+  cameraStatus.textContent = 'Biometric input captured. Set your preferences below and build your protocol.';
+  
+  // Smooth scroll to intake
+  const intakeSection = document.querySelector('#intake-section');
+  if (intakeSection) intakeSection.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Retake photo
@@ -120,86 +175,270 @@ if (capturePhotoBtn) capturePhotoBtn.addEventListener('click', capturePhoto);
 if (retakePhotoBtn) retakePhotoBtn.addEventListener('click', retakePhoto);
 
 // File input fallback
-selfie.addEventListener('change', () => {
-  const file = selfie.files?.[0];
-  if (!file) return;
+if (selfie) {
+  selfie.addEventListener('change', () => {
+    const file = selfie.files?.[0];
+    if (!file) return;
 
-  stopCameraStream();
-  cameraStreamEl.style.display = 'none';
-  if (previewPlaceholder) previewPlaceholder.style.display = 'none';
+    stopCameraStream();
+    cameraStreamEl.style.display = 'none';
+    if (previewPlaceholder) previewPlaceholder.style.display = 'none';
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    imageData = reader.result;
-    let img = preview.querySelector('img');
-    if (!img) {
-      img = document.createElement('img');
-      img.alt = 'Uploaded selfie';
-      preview.appendChild(img);
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageData = reader.result;
+      let img = preview.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = 'Uploaded selfie';
+        preview.appendChild(img);
+      }
+      img.src = imageData;
+      img.style.display = 'block';
+      preview.classList.add('active');
+
+      openCameraBtn.style.display = 'none';
+      capturePhotoBtn.style.display = 'none';
+      retakePhotoBtn.style.display = 'flex';
+      cameraStatus.textContent = 'Image loaded from device. Configure context preferences below.';
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Tab Switching for Daytime vs Nighttime Routine
+if (routineTabsContainer) {
+  routineTabsContainer.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    const targetTab = btn.getAttribute('data-tab');
+
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    if (targetTab === 'day') {
+      dayPanel.classList.add('active');
+      nightPanel.classList.remove('active');
+    } else {
+      nightPanel.classList.add('active');
+      dayPanel.classList.remove('active');
     }
-    img.src = imageData;
-    img.style.display = 'block';
-    preview.classList.add('active');
+  });
+}
 
-    openCameraBtn.style.display = 'none';
-    capturePhotoBtn.style.display = 'none';
-    retakePhotoBtn.style.display = 'flex';
-    cameraStatus.textContent = 'Image loaded. Fill in your context below.';
-  };
-  reader.readAsDataURL(file);
+// Open Multi-Vendor Store Modal
+function openStoreModal(product) {
+  if (!product) return;
+  modalProductImg.src = product.imageUrl || '/assets/mira-barrier-cream.png';
+  modalProductCategory.textContent = product.category || 'SKINCARE';
+  modalProductTitle.textContent = product.name;
+  modalProductPrice.textContent = `${product.price || '₹1,200'} · ${product.matchRate || '96% Match'}`;
+
+  // Build store links
+  const query = encodeURIComponent(product.name.replace(/™|®/g, ''));
+  const stores = product.stores || {};
+  
+  linkBlinkit.href = stores.blinkit || `https://blinkit.com/s/?q=${query}`;
+  linkZepto.href = stores.zepto || `https://www.zeptonow.com/search?query=${query}`;
+  linkNykaa.href = stores.nykaa || `https://www.nykaa.com/search/result/?q=${query}`;
+  linkOfficial.href = stores.official || 'https://www.cerave.com';
+
+  storeModal.style.display = 'flex';
+}
+
+function closeStoreModal() {
+  storeModal.style.display = 'none';
+}
+
+if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeStoreModal);
+if (storeModal) {
+  storeModal.addEventListener('click', (e) => {
+    if (e.target === storeModal) closeStoreModal();
+  });
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && storeModal.style.display === 'flex') {
+    closeStoreModal();
+  }
 });
 
+// Render Product Catalog
 function renderProducts(products) {
-  productGrid.innerHTML = products.map(product => `<article class="product"><p class="product-type">${product.category}</p><div class="packshot">VERIFIED ASSET SLOT</div><h3>${product.name}</h3><p>${product.match}</p><a href="${product.url}" target="_blank" rel="noreferrer">${product.retailer} →</a></article>`).join('');
+  currentProducts = products;
+  if (!productGrid) return;
+  
+  productGrid.innerHTML = products.map((product, idx) => `
+    <article class="product-card">
+      <div class="card-top-bar">
+        <span class="p-category">${product.category}</span>
+        <span class="p-match">${product.matchRate || '94% MATCH'}</span>
+      </div>
+      <div class="product-image-container">
+        <img src="${product.imageUrl}" alt="${product.name}" loading="lazy">
+      </div>
+      <h3>${product.name}</h3>
+      <p>${product.match}</p>
+      <div class="product-card-bottom">
+        <span class="p-price">${product.price}</span>
+        <button type="button" class="btn-open-stores" data-idx="${idx}">
+          <span>Shop Options</span> <span>→</span>
+        </button>
+      </div>
+    </article>
+  `).join('');
+
+  // Wire up shop option buttons
+  productGrid.querySelectorAll('.btn-open-stores').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-idx'), 10);
+      openStoreModal(currentProducts[idx]);
+    });
+  });
 }
 
-function renderRoutine(analysis) {
-  routine.innerHTML = analysis.routine.map((item, i) => `<article class="routine-item"><span class="routine-no">0${i + 1}</span><h3>${item.step}</h3><p>${item.guidance}</p></article>`).join('');
+// Render Dual AM / PM Routines
+function renderRoutineSequences(analysis) {
+  const dayItems = analysis.dayRoutine || [];
+  const nightItems = analysis.nightRoutine || [];
+
+  if (dayRoutineGrid) {
+    dayRoutineGrid.innerHTML = dayItems.map(item => `
+      <article class="routine-step-card">
+        <div class="routine-card-meta">
+          <span class="step-tag">${item.stepNumber || 'AM'}</span>
+          <span class="time-tag">MORNING (AM)</span>
+        </div>
+        <h3>${item.step}</h3>
+        <p>${item.guidance}</p>
+        <div class="routine-product-pick">
+          <small>${item.recommendedProduct || item.category}</small>
+          <button type="button" class="btn-card-shop" data-product="${item.recommendedProduct}">Shop →</button>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  if (nightRoutineGrid) {
+    nightRoutineGrid.innerHTML = nightItems.map(item => `
+      <article class="routine-step-card">
+        <div class="routine-card-meta">
+          <span class="step-tag">${item.stepNumber || 'PM'}</span>
+          <span class="time-tag">EVENING (PM)</span>
+        </div>
+        <h3>${item.step}</h3>
+        <p>${item.guidance}</p>
+        <div class="routine-product-pick">
+          <small>${item.recommendedProduct || item.category}</small>
+          <button type="button" class="btn-card-shop" data-product="${item.recommendedProduct}">Shop →</button>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // Wire up routine step shop buttons
+  document.querySelectorAll('.btn-card-shop').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pName = btn.getAttribute('data-product');
+      const matched = currentProducts.find(p => p.name.toLowerCase().includes(pName.toLowerCase())) || currentProducts[0];
+      openStoreModal(matched);
+    });
+  });
 }
 
+// Update 3D Rotating Product Showcase
+function updateHeroShowcase(heroProduct) {
+  currentHeroProduct = heroProduct || currentProducts[0] || {
+    name: "Mira Bio-Lipid Barrier Cream",
+    category: "Barrier Cream",
+    matchRate: "96% MATCH",
+    price: "₹1,200",
+    imageUrl: "/assets/mira-barrier-cream.png",
+    stores: {
+      blinkit: "https://blinkit.com/s/?q=cerave+moisturising+cream",
+      zepto: "https://www.zeptonow.com/search?query=cerave+moisturising+cream",
+      nykaa: "https://www.nykaa.com/search/result/?q=cerave+moisturising+cream",
+      official: "https://www.cerave.com/skincare/moisturizers/moisturizing-cream"
+    }
+  };
+
+  if (stageProductImg) stageProductImg.src = currentHeroProduct.imageUrl;
+  if (stageCardCategory) stageCardCategory.textContent = currentHeroProduct.category || "BARRIER CREAM";
+  if (stageCardMatch) stageCardMatch.textContent = `${currentHeroProduct.matchRate || "96% MATCH"} · ${currentHeroProduct.price || "₹1,200"}`;
+  if (heroProductSubtitle) heroProductSubtitle.textContent = currentHeroProduct.headline || "Chosen for your skin and your budget.";
+
+  if (showcaseView) showcaseView.style.display = 'flex';
+}
+
+if (btnHeroShop) {
+  btnHeroShop.addEventListener('click', () => {
+    openStoreModal(currentHeroProduct);
+  });
+}
+
+if (btnScanAgain) {
+  btnScanAgain.addEventListener('click', () => {
+    document.querySelector('#top').scrollIntoView({ behavior: 'smooth' });
+    retakePhoto();
+  });
+}
+
+// Load Catalog on page load
 async function loadCatalog() {
   try {
-    const data = await fetch('/api/catalog').then(r => r.json());
-    if (data.products) renderProducts(data.products);
+    const res = await fetch('/api/catalog');
+    const data = await res.json();
+    if (data.products && data.products.length > 0) {
+      renderProducts(data.products);
+      updateHeroShowcase(data.products[0]);
+    }
   } catch (err) {
-    console.warn('Could not load initial catalog:', err);
+    console.warn('Initial catalog load notice:', err);
   }
 }
 
-analyse.addEventListener('click', async () => {
-  if (!imageData) {
-    status.textContent = 'Please take a selfie or upload a photo first';
-    document.querySelector('#top').scrollIntoView({ behavior: 'smooth' });
-    return;
-  }
+// Build Routine Submission
+if (analyseBtn) {
+  analyseBtn.addEventListener('click', async () => {
+    analysisStatus.textContent = 'Synthesizing dual-sequence protocol…';
+    analyseBtn.disabled = true;
 
-  status.textContent = 'Building your cautious routine…';
-  analyse.disabled = true;
+    const payload = {
+      imageData,
+      ageRange: ageRangeInput.value,
+      goals: goalsInput.value,
+      sensitivities: sensitivitiesInput.value,
+      budget: budgetInput.value
+    };
 
-  try {
-    const response = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        imageData,
-        ageRange: document.querySelector('#ageRange').value,
-        goals: document.querySelector('#goals').value,
-        sensitivities: document.querySelector('#sensitivities').value,
-        budget: document.querySelector('#budget').value
-      })
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error);
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Protocol generation error');
 
-    renderRoutine(data.analysis);
-    if (data.catalog) renderProducts(data.catalog);
-    status.textContent = data.analysis.careLevel === 'professional' ? 'Professional care recommended — see the caution below' : data.analysis.summary;
-    document.querySelector('#result').scrollIntoView({ behavior: 'smooth' });
-  } catch (error) {
-    status.textContent = error.message || 'Analysis could not be completed';
-  } finally {
-    analyse.disabled = false;
-  }
-});
+      if (data.catalog) renderProducts(data.catalog);
+      if (data.analysis) {
+        renderRoutineSequences(data.analysis);
+        updateHeroShowcase(data.analysis.heroProduct || currentProducts[0]);
+        analysisStatus.textContent = data.analysis.careLevel === 'professional'
+          ? 'Professional care recommended — see clinical boundary'
+          : data.analysis.summary;
+      }
+
+      // Smooth scroll to 3D showcase
+      if (showcaseView) {
+        showcaseView.style.display = 'flex';
+        showcaseView.scrollIntoView({ behavior: 'smooth' });
+      }
+    } catch (error) {
+      analysisStatus.textContent = error.message || 'Analysis could not be completed';
+    } finally {
+      analyseBtn.disabled = false;
+    }
+  });
+}
 
 loadCatalog();

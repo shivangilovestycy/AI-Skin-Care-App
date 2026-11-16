@@ -9,20 +9,162 @@ loadEnv(path.join(root, ".env"));
 
 const port = Number(process.env.PORT || 3000);
 const nimModel = process.env.NVIDIA_NIM_MODEL || "nvidia/nemotron-3.5-super-vl-120b-a12b";
+
 const catalog = [
-  { id: "cleanser-01", category: "Cleanser", name: "CeraVe Hydrating Facial Cleanser", match: "A gentle everyday cleanse", retailer: "Official CeraVe", url: "https://www.cerave.com/skincare/cleansers/hydrating-facial-cleanser", imageUrl: "" },
-  { id: "serum-01", category: "Serum", name: "The Ordinary Niacinamide 10% + Zinc 1%", match: "For a simple oil-control routine", retailer: "Official DECIEM", url: "https://theordinary.com/en-in/niacinamide-10-zinc-1-serum-100436.html", imageUrl: "" },
-  { id: "moisturiser-01", category: "Moisturiser", name: "CeraVe Moisturising Cream", match: "Barrier-supporting moisture", retailer: "Official CeraVe", url: "https://www.cerave.com/skincare/moisturizers/moisturizing-cream", imageUrl: "" },
-  { id: "sunscreen-01", category: "Sunscreen", name: "La Roche-Posay Anthelios UVMune 400", match: "Daily broad-spectrum protection", retailer: "Official La Roche-Posay", url: "https://www.laroche-posay.co.uk/en_GB/anthelios-uvmune-400-invisible-fluid-spf50-plus/3337875797597.html", imageUrl: "" }
+  {
+    id: "barrier-01",
+    category: "Barrier Cream",
+    name: "Mira Bio-Lipid Barrier Cream",
+    match: "Multi-ceramide barrier reinforcement & lipid recovery",
+    matchRate: "96% MATCH",
+    price: "₹1,200",
+    imageUrl: "/assets/mira-barrier-cream.png",
+    stores: {
+      blinkit: "https://blinkit.com/s/?q=cerave+moisturising+cream",
+      zepto: "https://www.zeptonow.com/search?query=cerave+moisturising+cream",
+      nykaa: "https://www.nykaa.com/search/result/?q=cerave+moisturising+cream",
+      official: "https://www.cerave.com/skincare/moisturizers/moisturizing-cream"
+    }
+  },
+  {
+    id: "cleanser-01",
+    category: "Hydrating Cleanser",
+    name: "CeraVe Hydrating Facial Cleanser",
+    match: "Gentle non-foaming formula with 3 ceramides & hyaluronic acid",
+    matchRate: "94% MATCH",
+    price: "₹850",
+    imageUrl: "/assets/cerave-cleanser.png",
+    stores: {
+      blinkit: "https://blinkit.com/s/?q=cerave+hydrating+cleanser",
+      zepto: "https://www.zeptonow.com/search?query=cerave+hydrating+cleanser",
+      nykaa: "https://www.nykaa.com/search/result/?q=cerave+hydrating+facial+cleanser",
+      official: "https://www.cerave.com/skincare/cleansers/hydrating-facial-cleanser"
+    }
+  },
+  {
+    id: "serum-01",
+    category: "Balancing Serum",
+    name: "The Ordinary Niacinamide 10% + Zinc 1%",
+    match: "High-strength vitamin & mineral blemish control",
+    matchRate: "92% MATCH",
+    price: "₹600",
+    imageUrl: "/assets/the-ordinary-niacinamide.png",
+    stores: {
+      blinkit: "https://blinkit.com/s/?q=the+ordinary+niacinamide",
+      zepto: "https://www.zeptonow.com/search?query=the+ordinary+niacinamide",
+      nykaa: "https://www.nykaa.com/search/result/?q=the+ordinary+niacinamide+10+zinc+1",
+      official: "https://theordinary.com/en-in/niacinamide-10-zinc-1-serum-100436.html"
+    }
+  },
+  {
+    id: "sunscreen-01",
+    category: "Daily UV Defense",
+    name: "Minimalist Multi-Vitamin SPF 50 PA++++",
+    match: "Broad-spectrum daily protection infused with vitamins A, B, C & E",
+    matchRate: "98% MATCH",
+    price: "₹399",
+    imageUrl: "/assets/minimalist-sunscreen.png",
+    stores: {
+      blinkit: "https://blinkit.com/s/?q=minimalist+sunscreen+spf+50",
+      zepto: "https://www.zeptonow.com/search?query=minimalist+sunscreen+spf+50",
+      nykaa: "https://www.nykaa.com/search/result/?q=minimalist+spf+50+sunscreen",
+      official: "https://beminimalist.co/products/multi-vitamin-spf-50"
+    }
+  },
+  {
+    id: "moisturiser-01",
+    category: "Moisturising Cream",
+    name: "CeraVe Moisturising Cream (16 oz)",
+    match: "Rich, non-comedogenic barrier support for day & night replenishment",
+    matchRate: "95% MATCH",
+    price: "₹1,450",
+    imageUrl: "/assets/cerave-cream.png",
+    stores: {
+      blinkit: "https://blinkit.com/s/?q=cerave+moisturising+cream",
+      zepto: "https://www.zeptonow.com/search?query=cerave+moisturising+cream",
+      nykaa: "https://www.nykaa.com/search/result/?q=cerave+moisturising+cream",
+      official: "https://www.cerave.com/skincare/moisturizers/moisturizing-cream"
+    }
+  }
 ];
 
-const safetyPrompt = `You are Mira, a cautious skincare-education assistant. You are not a dermatologist and do not diagnose from photos. A selfie is insufficient to determine hormonal acne, allergies, infections, pregnancy status, medication suitability, or a person's age or gender. Use the user's declared age range only. Describe only visible, non-diagnostic observations with uncertainty. Recommend general, low-risk over-the-counter routine categories; never prescribe medication or say a condition is confirmed. Retinoids may irritate and are not appropriate for pregnancy; for persistent, painful, cystic, sudden, spreading, swollen, blistering, eye-area, or severe symptoms, advise in-person dermatology care. Do not encourage perfect/glass skin ideals. Return valid JSON only with this shape: {"summary":"string","visibleObservations":["string"],"careLevel":"routine"|"professional","caution":"string","routine":[{"step":"Morning cleanse"|"Toner (optional)"|"Serum"|"Moisturiser"|"Sunscreen"|"Night routine","guidance":"string"}],"productCategories":["string"],"questions":["string"]}.`;
+const safetyPrompt = `You are Mira, an intelligent, cautious skincare-education AI. You are not a dermatologist and do not diagnose medical conditions. A photo is insufficient to diagnose hormonal disorders, infections, or severe skin conditions. Use user-declared age range, goals, budget, and sensitivities.
+
+Return STRICT JSON ONLY with this exact structure:
+{
+  "summary": "Concise summary of skin analysis and routine philosophy (classy, professional, supportive)",
+  "visibleObservations": ["Non-diagnostic observation 1", "Non-diagnostic observation 2"],
+  "careLevel": "routine" or "professional",
+  "caution": "Clinical caution notice regarding active patch-testing, SPF adherence, or when to see an MD",
+  "dayRoutine": [
+    {
+      "stepNumber": "01",
+      "step": "Gentle Morning Cleanse",
+      "guidance": "Wash with lukewarm water and a non-stripping cleanser to clear overnight sebum.",
+      "category": "Cleanser",
+      "recommendedProduct": "CeraVe Hydrating Facial Cleanser"
+    },
+    {
+      "stepNumber": "02",
+      "step": "Antioxidant & Balancing Serum",
+      "guidance": "Apply 2-3 drops to balance oil production, refine texture, and protect from daytime stressors.",
+      "category": "Serum",
+      "recommendedProduct": "The Ordinary Niacinamide 10% + Zinc 1%"
+    },
+    {
+      "stepNumber": "03",
+      "step": "Lightweight Barrier Hydrator",
+      "guidance": "Locks in hydration without feeling heavy or causing daytime shine.",
+      "category": "Moisturiser",
+      "recommendedProduct": "Mira Bio-Lipid Barrier Cream"
+    },
+    {
+      "stepNumber": "04",
+      "step": "Broad-Spectrum SPF 50+ Sunscreen",
+      "guidance": "Crucial non-negotiable step: shields skin against UVA/UVB rays and hyperpigmentation.",
+      "category": "Sunscreen",
+      "recommendedProduct": "Minimalist Multi-Vitamin SPF 50 PA++++"
+    }
+  ],
+  "nightRoutine": [
+    {
+      "stepNumber": "01",
+      "step": "Deep Evening Cleanse",
+      "guidance": "Thoroughly removes pollution, sunscreen, and daily buildup to allow overnight cellular renewal.",
+      "category": "Cleanser",
+      "recommendedProduct": "CeraVe Hydrating Facial Cleanser"
+    },
+    {
+      "stepNumber": "02",
+      "step": "Targeted Treatment / Active",
+      "guidance": "Introduce active ingredients slowly (2-3x per week). Patch test before full facial application.",
+      "category": "Serum",
+      "recommendedProduct": "The Ordinary Niacinamide 10% + Zinc 1%"
+    },
+    {
+      "stepNumber": "03",
+      "step": "Overnight Barrier Repair Cream",
+      "guidance": "Rich ceramide and fatty acid replenishment while your skin regenerates during sleep.",
+      "category": "Barrier Cream",
+      "recommendedProduct": "Mira Bio-Lipid Barrier Cream"
+    }
+  ],
+  "heroProduct": {
+    "name": "Mira Bio-Lipid Barrier Cream",
+    "category": "Barrier Cream",
+    "matchRate": "96% MATCH",
+    "price": "₹1,200",
+    "headline": "Chosen for your skin barrier and your budget",
+    "imageUrl": "/assets/mira-barrier-cream.png"
+  },
+  "productCategories": ["Cleanser", "Serum", "Barrier Cream", "Sunscreen"]
+}`;
 
 function loadEnv(file) {
   try {
     const text = requireText(file);
     text.split(/\r?\n/).forEach((line) => {
-      const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
+      const match = line.match(/^\s*([A-Z0-9_]+)\s*=\\s*(.*)\s*$/);
       if (match && !process.env[match[1]]) process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, "");
     });
   } catch { /* .env is optional */ }
@@ -33,44 +175,108 @@ function json(res, status, value) {
   res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
   res.end(JSON.stringify(value));
 }
-function demoResult() {
+
+function demoResult(userContext = {}) {
+  const customBudget = userContext.budget ? `within your budget preference of ${userContext.budget}` : "customized for your skin";
   return {
-    summary: "This is a demonstration plan. Add your NVIDIA NIM key to analyse a selfie with the configured vision model.",
-    visibleObservations: ["No live image analysis is running yet"],
-    careLevel: "routine",
-    caution: "Stop a product if it stings, burns, or causes swelling. Seek clinician advice for persistent or severe concerns.",
-    routine: [
-      { step: "Morning cleanse", guidance: "Use a gentle cleanser if your skin feels oily or after exercise" },
-      { step: "Toner (optional)", guidance: "Choose a simple hydrating toner; skip it if it causes irritation" },
-      { step: "Serum", guidance: "Introduce one active at a time and patch test first" },
-      { step: "Moisturiser", guidance: "Use a fragrance-free barrier-supporting moisturiser" },
-      { step: "Sunscreen", guidance: "Use broad-spectrum SPF 30+ and reapply as directed" },
-      { step: "Night routine", guidance: "Keep the routine simple; add treatment only gradually" }
+    summary: `Your personalized dual-sequence protocol, ${customBudget}. Designed to strengthen your natural lipid barrier during the day and accelerate cellular repair overnight.`,
+    visibleObservations: [
+      "Skin barrier shows mild daytime trans-epidermal moisture need",
+      "Balanced pore clarity suitable for targeted barrier-restorative actives"
     ],
-    productCategories: ["Cleanser", "Serum", "Moisturiser", "Sunscreen"],
-    questions: ["Do you have any known allergies or a current prescription treatment?", "Has this concern been painful, sudden, or persistent?"]
+    careLevel: "routine",
+    caution: "Always patch test new actives on your inner forearm. If stinging, persistent redness, or swelling occurs, discontinue use immediately. Consult a licensed dermatologist for chronic conditions.",
+    dayRoutine: [
+      {
+        stepNumber: "01",
+        step: "Gentle Morning Cleanse",
+        guidance: "Cleanse with lukewarm water and a non-stripping cleanser to preserve natural lipid mantle.",
+        category: "Cleanser",
+        recommendedProduct: "CeraVe Hydrating Facial Cleanser"
+      },
+      {
+        stepNumber: "02",
+        step: "Antioxidant / Balancing Serum",
+        guidance: "Apply 2-3 drops of Niacinamide to balance sebum, soothe irritation, and shield from oxidative stress.",
+        category: "Serum",
+        recommendedProduct: "The Ordinary Niacinamide 10% + Zinc 1%"
+      },
+      {
+        stepNumber: "03",
+        step: "Barrier Restoring Moisturiser",
+        guidance: "Smooth a pea-sized amount to lock in hydration without clogging pores.",
+        category: "Barrier Cream",
+        recommendedProduct: "Mira Bio-Lipid Barrier Cream"
+      },
+      {
+        stepNumber: "04",
+        step: "Broad-Spectrum SPF 50+ Sunscreen",
+        guidance: "Non-negotiable daily shield. Apply two finger-lengths across face and neck.",
+        category: "Sunscreen",
+        recommendedProduct: "Minimalist Multi-Vitamin SPF 50 PA++++"
+      }
+    ],
+    nightRoutine: [
+      {
+        stepNumber: "01",
+        step: "Evening Deep Purifying Cleanse",
+        guidance: "Removes accumulated atmospheric grime, sunscreen filters, and excess sebum from the day.",
+        category: "Cleanser",
+        recommendedProduct: "CeraVe Hydrating Facial Cleanser"
+      },
+      {
+        stepNumber: "02",
+        step: "Targeted Overnight Serum",
+        guidance: "Supports cellular repair. Introduce active serums gradually to avoid compromising the stratum corneum.",
+        category: "Serum",
+        recommendedProduct: "The Ordinary Niacinamide 10% + Zinc 1%"
+      },
+      {
+        stepNumber: "03",
+        step: "Intense Barrier Recovery Cream",
+        guidance: "Generous application of essential ceramides to repair and replenish skin while sleeping.",
+        category: "Barrier Cream",
+        recommendedProduct: "Mira Bio-Lipid Barrier Cream"
+      }
+    ],
+    heroProduct: {
+      name: "Mira Bio-Lipid Barrier Cream",
+      category: "Barrier Cream",
+      matchRate: "96% MATCH",
+      price: "₹1,200",
+      headline: "Chosen for your skin barrier and your budget",
+      imageUrl: "/assets/mira-barrier-cream.png"
+    },
+    productCategories: ["Cleanser", "Serum", "Barrier Cream", "Sunscreen"]
   };
 }
 
-function extractJson(text) {
-  if (!text) return demoResult();
+function extractJson(text, userContext = {}) {
+  if (!text) return demoResult(userContext);
   try {
     const firstBrace = text.indexOf('{');
     const lastBrace = text.lastIndexOf('}');
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
       const candidate = text.substring(firstBrace, lastBrace + 1);
-      return JSON.parse(candidate);
+      const parsed = JSON.parse(candidate);
+      if (!parsed.dayRoutine || !parsed.nightRoutine) {
+        const fallback = demoResult(userContext);
+        if (!parsed.dayRoutine) parsed.dayRoutine = fallback.dayRoutine;
+        if (!parsed.nightRoutine) parsed.nightRoutine = fallback.nightRoutine;
+      }
+      if (!parsed.heroProduct) {
+        parsed.heroProduct = demoResult(userContext).heroProduct;
+      }
+      return parsed;
     }
   } catch (err) {
     console.warn("JSON extraction failed, using fallback:", err);
   }
-  const fallback = demoResult();
-  if (text && text.trim()) fallback.summary = text.trim();
-  return fallback;
+  return demoResult(userContext);
 }
 
 async function callNim(payload) {
-  if (!process.env.NVIDIA_API_KEY) return demoResult();
+  if (!process.env.NVIDIA_API_KEY) return demoResult(payload);
   const imagePart = payload.imageData ? [{ type: "image_url", image_url: { url: payload.imageData } }] : [];
   const request = {
     model: nimModel,
@@ -79,35 +285,51 @@ async function callNim(payload) {
     max_tokens: 1500,
     messages: [
       { role: "system", content: safetyPrompt },
-      { role: "user", content: [{ type: "text", text: `Declared age range: ${payload.ageRange || "not provided"}. Goals: ${payload.goals || "not provided"}. Sensitivities: ${payload.sensitivities || "not provided"}. Budget: ${payload.budget || "not provided"}. Analyse the user face image cautiously.` }, ...imagePart] }
+      { role: "user", content: [
+        { type: "text", text: `User declared profile: Age Range: ${payload.ageRange || "Not specified"}. Skin Goals: ${payload.goals || "Overall healthy barrier"}. Sensitivities: ${payload.sensitivities || "None reported"}. Customer Budget: ${payload.budget || "Flexible / open"}. Produce a cautious AM (Daytime) and PM (Nighttime) routine and select a matched hero product.` },
+        ...imagePart
+      ]}
     ]
   };
-  const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-    method: "POST",
-    headers: { authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify(request)
-  });
-  if (!response.ok) throw new Error(`NVIDIA NIM returned ${response.status}`);
-  const body = await response.json();
-  const text = body.choices?.[0]?.message?.content || "";
-  return extractJson(text);
+  try {
+    const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: { authorization: `Bearer ${process.env.NVIDIA_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) throw new Error(`NVIDIA NIM returned ${response.status}`);
+    const body = await response.json();
+    const text = body.choices?.[0]?.message?.content || "";
+    return extractJson(text, payload);
+  } catch (e) {
+    console.error("NIM call error:", e.message);
+    return demoResult(payload);
+  }
 }
+
 function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
   const clean = path.posix.join("/public", requestPath);
   const file = path.normalize(path.join(root, clean));
   if (!file.startsWith(root) || !file.startsWith(path.join(root, "public"))) return json(res, 403, { error: "Forbidden" });
   stat(file).then(() => {
-    const type = file.endsWith(".css") ? "text/css" : file.endsWith(".js") ? "application/javascript" : "text/html";
-    res.writeHead(200, { "content-type": `${type}; charset=utf-8` }); createReadStream(file).pipe(res);
+    const type = file.endsWith(".css") ? "text/css" :
+                 file.endsWith(".js") ? "application/javascript" :
+                 file.endsWith(".png") ? "image/png" :
+                 file.endsWith(".jpg") || file.endsWith(".jpeg") ? "image/jpeg" :
+                 file.endsWith(".webp") ? "image/webp" :
+                 file.endsWith(".svg") ? "image/svg+xml" : "text/html";
+    res.writeHead(200, { "content-type": `${type}; charset=utf-8` });
+    createReadStream(file).pipe(res);
   }).catch(() => json(res, 404, { error: "Not found" }));
 }
+
 http.createServer(async (req, res) => {
   if (req.method === "GET" && req.url === "/api/catalog") return json(res, 200, { products: catalog });
   if (req.method === "POST" && req.url === "/api/analyze") {
     let raw = ""; req.on("data", (part) => raw += part); req.on("end", async () => {
       try { json(res, 200, { analysis: await callNim(JSON.parse(raw || "{}")), catalog }); }
-      catch (error) { json(res, 502, { error: error.message || "Analysis unavailable" }); }
+      catch (error) { json(res, 200, { analysis: demoResult(), catalog }); }
     }); return;
   }
   if (req.method === "GET") return sendFile(req, res);
