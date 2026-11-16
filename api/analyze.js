@@ -1,8 +1,9 @@
-import { catalog } from "./catalog.js";
+import { catalog, productsList } from "./catalog.js";
 
 const nimModel = process.env.NVIDIA_NIM_MODEL || "nvidia/nemotron-3.5-super-vl-120b-a12b";
-const safetyPrompt = `You are Mira, an intelligent, cautious skincare-education AI. You are not a dermatologist and do not diagnose medical conditions. A photo is insufficient to diagnose hormonal disorders, infections, or severe skin conditions. Use user-declared age range, goals, budget, and sensitivities.
+const safetyPrompt = `You are Mira, an intelligent, cautious clinical skincare-education AI. You are not a dermatologist and do not diagnose medical conditions. A photo is insufficient to diagnose hormonal disorders, infections, or severe skin conditions. Use user-declared age range, goals, budget, and sensitivities.
 
+Provide a dedicated, clinical DAYTIME (AM) routine and NIGHTTIME (PM) routine with specific step numbers, timing guidance, and product advice.
 Return STRICT JSON ONLY with this exact structure:
 {
   "summary": "Concise summary of skin analysis and routine philosophy (classy, professional, supportive)",
@@ -29,7 +30,7 @@ Return STRICT JSON ONLY with this exact structure:
       "step": "Lightweight Barrier Hydrator",
       "guidance": "Locks in hydration without feeling heavy or causing daytime shine.",
       "category": "Moisturiser",
-      "recommendedProduct": "Mira Bio-Lipid Barrier Cream"
+      "recommendedProduct": "CeraVe Daily Moisturising Lotion"
     },
     {
       "stepNumber": "04",
@@ -42,44 +43,35 @@ Return STRICT JSON ONLY with this exact structure:
   "nightRoutine": [
     {
       "stepNumber": "01",
-      "step": "Deep Evening Cleanse",
+      "step": "Purifying Evening Cleanse",
       "guidance": "Thoroughly removes pollution, sunscreen, and daily buildup to allow overnight cellular renewal.",
       "category": "Cleanser",
-      "recommendedProduct": "CeraVe Hydrating Facial Cleanser"
+      "recommendedProduct": "Cetaphil Gentle Skin Cleanser"
     },
     {
       "stepNumber": "02",
-      "step": "Targeted Treatment / Active",
-      "guidance": "Introduce active ingredients slowly (2-3x per week). Patch test before full facial application.",
-      "category": "Serum",
-      "recommendedProduct": "The Ordinary Niacinamide 10% + Zinc 1%"
+      "step": "Active Cellular Renewal Serum",
+      "guidance": "Introduce active retinoids or acids slowly (2-3 nights per week). Always patch test before application.",
+      "category": "Active Serum",
+      "recommendedProduct": "The Ordinary Retinol 0.2% in Squalane"
     },
     {
       "stepNumber": "03",
-      "step": "Overnight Barrier Repair Cream",
-      "guidance": "Rich ceramide and fatty acid replenishment while your skin regenerates during sleep.",
-      "category": "Barrier Cream",
-      "recommendedProduct": "Mira Bio-Lipid Barrier Cream"
+      "step": "Overnight Deep Barrier Recovery",
+      "guidance": "Rich ceramide and fatty acid replenishment while your skin regenerates during deep sleep.",
+      "category": "Night Cream",
+      "recommendedProduct": "CeraVe Moisturising Cream (16 oz)"
     }
-  ],
-  "heroProduct": {
-    "name": "Mira Bio-Lipid Barrier Cream",
-    "category": "Barrier Cream",
-    "matchRate": "96% MATCH",
-    "price": "₹1,200",
-    "headline": "Chosen for your skin barrier and your budget",
-    "imageUrl": "/assets/mira-barrier-cream.png"
-  },
-  "productCategories": ["Cleanser", "Serum", "Barrier Cream", "Sunscreen"]
+  ]
 }`;
 
 function demoResult(userContext = {}) {
   const customBudget = userContext.budget ? `within your budget preference of ${userContext.budget}` : "customized for your skin";
   return {
-    summary: `Your personalized dual-sequence protocol, ${customBudget}. Designed to strengthen your natural lipid barrier during the day and accelerate cellular repair overnight.`,
+    summary: `Your personalized clinical protocol, ${customBudget}. Engineered with distinct daytime barrier shielding and nighttime cellular restoration routines.`,
     visibleObservations: [
       "Skin barrier shows mild daytime trans-epidermal moisture need",
-      "Balanced pore clarity suitable for targeted barrier-restorative actives"
+      "Balanced pore clarity suitable for targeted active ingredients"
     ],
     careLevel: "routine",
     caution: "Always patch test new actives on your inner forearm. If stinging, persistent redness, or swelling occurs, discontinue use immediately. Consult a licensed dermatologist for chronic conditions.",
@@ -87,7 +79,7 @@ function demoResult(userContext = {}) {
       {
         stepNumber: "01",
         step: "Gentle Morning Cleanse",
-        guidance: "Cleanse with lukewarm water and a non-stripping cleanser to preserve natural lipid mantle.",
+        guidance: "Cleanse with lukewarm water and a non-stripping cleanser to preserve your natural lipid mantle.",
         category: "Cleanser",
         recommendedProduct: "CeraVe Hydrating Facial Cleanser"
       },
@@ -101,14 +93,14 @@ function demoResult(userContext = {}) {
       {
         stepNumber: "03",
         step: "Barrier Restoring Moisturiser",
-        guidance: "Smooth a pea-sized amount to lock in hydration without clogging pores.",
-        category: "Barrier Cream",
-        recommendedProduct: "Mira Bio-Lipid Barrier Cream"
+        guidance: "Smooth a pea-sized amount to lock in hydration without clogging pores or feeling greasy.",
+        category: "Moisturiser",
+        recommendedProduct: "CeraVe Daily Moisturising Lotion"
       },
       {
         stepNumber: "04",
         step: "Broad-Spectrum SPF 50+ Sunscreen",
-        guidance: "Non-negotiable daily shield. Apply two finger-lengths across face and neck.",
+        guidance: "Non-negotiable daily shield. Apply two finger-lengths across face and neck 15 mins before sun exposure.",
         category: "Sunscreen",
         recommendedProduct: "Minimalist Multi-Vitamin SPF 50 PA++++"
       }
@@ -119,32 +111,23 @@ function demoResult(userContext = {}) {
         step: "Evening Deep Purifying Cleanse",
         guidance: "Removes accumulated atmospheric grime, sunscreen filters, and excess sebum from the day.",
         category: "Cleanser",
-        recommendedProduct: "CeraVe Hydrating Facial Cleanser"
+        recommendedProduct: "Cetaphil Gentle Skin Cleanser"
       },
       {
         stepNumber: "02",
         step: "Targeted Overnight Serum",
-        guidance: "Supports cellular repair. Introduce active serums gradually to avoid compromising the stratum corneum.",
-        category: "Serum",
-        recommendedProduct: "The Ordinary Niacinamide 10% + Zinc 1%"
+        guidance: "Accelerates cellular turnover and collagen synthesis. Introduce active retinoids gradually 2-3 nights a week.",
+        category: "Active Serum",
+        recommendedProduct: "The Ordinary Retinol 0.2% in Squalane"
       },
       {
         stepNumber: "03",
         step: "Intense Barrier Recovery Cream",
         guidance: "Generous application of essential ceramides to repair and replenish skin while sleeping.",
-        category: "Barrier Cream",
-        recommendedProduct: "Mira Bio-Lipid Barrier Cream"
+        category: "Night Cream",
+        recommendedProduct: "CeraVe Moisturising Cream (16 oz)"
       }
-    ],
-    heroProduct: {
-      name: "Mira Bio-Lipid Barrier Cream",
-      category: "Barrier Cream",
-      matchRate: "96% MATCH",
-      price: "₹1,200",
-      headline: "Chosen for your skin barrier and your budget",
-      imageUrl: "/assets/mira-barrier-cream.png"
-    },
-    productCategories: ["Cleanser", "Serum", "Barrier Cream", "Sunscreen"]
+    ]
   };
 }
 
@@ -156,14 +139,10 @@ function extractJson(text, userContext = {}) {
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
       const candidate = text.substring(firstBrace, lastBrace + 1);
       const parsed = JSON.parse(candidate);
-      // Ensure dayRoutine and nightRoutine exist
       if (!parsed.dayRoutine || !parsed.nightRoutine) {
         const fallback = demoResult(userContext);
         if (!parsed.dayRoutine) parsed.dayRoutine = fallback.dayRoutine;
         if (!parsed.nightRoutine) parsed.nightRoutine = fallback.nightRoutine;
-      }
-      if (!parsed.heroProduct) {
-        parsed.heroProduct = demoResult(userContext).heroProduct;
       }
       return parsed;
     }
@@ -184,7 +163,7 @@ async function callNim(payload) {
     messages: [
       { role: "system", content: safetyPrompt },
       { role: "user", content: [
-        { type: "text", text: `User declared profile: Age Range: ${payload.ageRange || "Not specified"}. Skin Goals: ${payload.goals || "Overall healthy barrier"}. Sensitivities: ${payload.sensitivities || "None reported"}. Customer Budget: ${payload.budget || "Flexible / open"}. Produce a cautious AM (Daytime) and PM (Nighttime) routine and select a matched hero product.` },
+        { type: "text", text: `User declared profile: Age Range: ${payload.ageRange || "Not specified"}. Skin Goals: ${payload.goals || "Overall healthy barrier"}. Sensitivities: ${payload.sensitivities || "None reported"}. Customer Budget: ${payload.budget || "Flexible / open"}. Produce a cautious AM (Daytime) and PM (Nighttime) routine.` },
         ...imagePart
       ]}
     ]
@@ -227,9 +206,9 @@ export default async function handler(req, res) {
   try {
     const analysis = await callNim(body);
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify({ analysis, catalog }));
+    res.end(JSON.stringify({ analysis, catalog, products: productsList }));
   } catch (error) {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
-    res.end(JSON.stringify({ analysis: demoResult(body), catalog }));
+    res.end(JSON.stringify({ analysis: demoResult(body), catalog, products: productsList }));
   }
 }

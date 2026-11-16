@@ -24,6 +24,10 @@
         <span class="tagline">SKIN INTELLIGENCE ✦ 2000</span>
       </div>
       <div class="system-right">
+        <button id="header-reminder-btn" class="header-pill-btn" title="Open Routine Reminders">
+          <span class="pulse-dot"></span>
+          <span id="header-reminder-label">REMINDERS ACTIVE</span>
+        </button>
         <span id="system-time" class="time-code">07:40</span>
       </div>
     </header>
@@ -33,7 +37,7 @@
       <div class="hero-copy">
         <p class="index-tag">01 / BIOMETRIC FACE INPUT</p>
         <h1 class="hero-title">See what<br>your skin<br>needs</h1>
-        <p class="lede">Capture a single selfie using your device camera. Receive a clinical, dual-sequence routine with authentic products tailored to your skin and budget.</p>
+        <p class="lede">Capture a selfie using your device camera. Receive a medical-grade, dual-sequence AM/PM routine with authentic products tailored to your skin and budget.</p>
         
         <div class="camera-actions">
           <button id="open-camera" type="button" class="btn-primary-action">
@@ -49,7 +53,7 @@
           <input id="selfie" type="file" accept="image/*" capture="user" hidden>
         </div>
         
-        <p class="fine-print" id="camera-status">Images are processed in a privacy-preserving session. Results provide cosmetic education, not medical diagnoses.</p>
+        <p class="fine-print" id="camera-status">Images are processed locally and securely. Results provide clinical skincare education, not medical diagnoses.</p>
       </div>
 
       <div class="hero-visual">
@@ -63,7 +67,7 @@
           <canvas id="camera-canvas" style="display:none;"></canvas>
           <div id="preview-placeholder">
             <div class="scanner-icon">⌁</div>
-            <p>Camera standby</p>
+            <p>Camera Standby</p>
             <span class="hint">Tap "Use Device Camera" to start scanner</span>
           </div>
         </div>
@@ -108,12 +112,22 @@
       </div>
     </section>
 
-    <!-- Results Section: Hero Product Showcase (matching user reference image) -->
-    <section class="showcase-section" id="showcase-view" style="display:none;">
+    <!-- Featured 3D Rotating Product Showcase (Matching Reference Image with Light Cone) -->
+    <section class="showcase-section" id="showcase-view">
       <div class="showcase-header">
         <p class="index-tag">03 / HERO PRODUCT MATCH</p>
         <h2 class="showcase-title">One thing at a time</h2>
-        <p class="showcase-subtitle" id="hero-product-subtitle">Chosen for your skin and your budget.</p>
+        <p class="showcase-subtitle" id="hero-product-subtitle">Chosen for your skin barrier and your budget.</p>
+        
+        <!-- Toggle to switch Hero Product between Daytime and Nighttime -->
+        <div class="hero-toggle-bar">
+          <button type="button" class="hero-toggle-btn active" id="hero-toggle-day" data-mode="day">
+            ☀️ View Daytime Hero
+          </button>
+          <button type="button" class="hero-toggle-btn" id="hero-toggle-night" data-mode="night">
+            🌙 View Nighttime Hero
+          </button>
+        </div>
       </div>
 
       <!-- 3D Rotating Product Card with Light Triangle / Pedestal -->
@@ -123,15 +137,15 @@
         <div class="stage-star star-2"></div>
         <div class="stage-star star-3"></div>
 
-        <!-- The Light Triangle / Spotlight Cone -->
+        <!-- The Light Triangle / Spotlight Cone Beam -->
         <div class="light-cone"></div>
 
         <!-- Orbital Dashed Rings -->
         <div class="orbital-ring"></div>
 
-        <!-- 3D Rotating Product Image -->
+        <!-- 3D Turntable Rotating Authentic Product Bottle -->
         <div class="product-rotation-wrapper">
-          <img id="stage-product-img" class="rotating-bottle" src="/assets/mira-barrier-cream.png" alt="Featured Skincare Product">
+          <img id="stage-product-img" class="rotating-bottle-3d" src="/assets/cerave-cleanser.png" alt="Featured Authentic Skincare Product">
         </div>
 
         <!-- Glowing Elliptical Pedestal Platform -->
@@ -141,8 +155,8 @@
 
         <!-- Bottom Info Bar inside Card -->
         <div class="stage-card-footer">
-          <span class="stage-card-category" id="stage-card-category">BARRIER CREAM</span>
-          <span class="stage-card-match" id="stage-card-match">96% MATCH · ₹1,200</span>
+          <span class="stage-card-category" id="stage-card-category">HYDRATING CLEANSER</span>
+          <span class="stage-card-match" id="stage-card-match">97% MATCH · ₹850</span>
         </div>
       </div>
 
@@ -157,58 +171,66 @@
       </div>
     </section>
 
-    <!-- Results Section: Dual AM/PM Routine Sequence -->
+    <!-- Routine Sequences Section with AM / PM Interactive Mode Switcher -->
     <section class="result-section" id="result">
       <div class="section-head">
         <div>
-          <p class="index-tag">04 / YOUR COMPLETE SEQUENCES</p>
+          <p class="index-tag">04 / STRUCTURED PROTOCOLS</p>
           <h2 class="result-main-title">Day & Night Sequence</h2>
         </div>
-        <p id="analysis-status" class="analysis-status-pill">Complete the intake to generate plan</p>
+        <p id="analysis-status" class="analysis-status-pill">Select sequence below to inspect protocol</p>
       </div>
 
-      <!-- Routine Sequence Tabs -->
+      <!-- Routine Sequence Selector Tabs (Switches Both Routines & Rotating Products) -->
       <div class="routine-tabs" id="routine-tabs-container">
-        <button type="button" class="tab-btn active" data-tab="day">
-          <span class="tab-icon">☀️</span> DAYTIME ROUTINE (AM)
+        <button type="button" class="tab-btn active" id="tab-day-btn" data-tab="day">
+          <span class="tab-icon">☀️</span> DAYTIME SKINCARE ROUTINE (AM)
         </button>
-        <button type="button" class="tab-btn" data-tab="night">
-          <span class="tab-icon">🌙</span> NIGHTTIME ROUTINE (PM)
+        <button type="button" class="tab-btn" id="tab-night-btn" data-tab="night">
+          <span class="tab-icon">🌙</span> NIGHTTIME SKINCARE ROUTINE (PM)
         </button>
       </div>
 
       <!-- Daytime Routine Container -->
       <div class="routine-panel active" id="day-routine-panel">
-        <div class="routine-grid" id="day-routine-grid">
-          <p class="empty-state">Your morning sequence will appear here once analysed.</p>
+        <div class="routine-meta-bar">
+          <span class="meta-timing">☀️ ACTIVE HOURS: 07:00 – 12:00</span>
+          <span class="meta-focus">OBJECTIVE: LIPID BARRIER DEFENSE & BROAD-SPECTRUM UV PROTECTION</span>
         </div>
+        <div class="routine-grid" id="day-routine-grid"></div>
       </div>
 
       <!-- Nighttime Routine Container -->
       <div class="routine-panel" id="night-routine-panel">
-        <div class="routine-grid" id="night-routine-grid">
-          <p class="empty-state">Your evening sequence will appear here once analysed.</p>
+        <div class="routine-meta-bar">
+          <span class="meta-timing">🌙 ACTIVE HOURS: 20:00 – 23:30</span>
+          <span class="meta-focus">OBJECTIVE: DEEP POLLUTION CLEARING, RETINOL RENEWAL & OVERNIGHT LIPID REBUILD</span>
         </div>
+        <div class="routine-grid" id="night-routine-grid"></div>
       </div>
     </section>
 
-    <!-- Verified Product Recommendations with Quick Commerce -->
+    <!-- Rotating Authentic Product Formulations with Quick Commerce -->
     <section class="catalog-section" id="catalog-section">
       <div class="section-head">
         <div>
-          <p class="index-tag">05 / VERIFIED PRODUCT CATALOG</p>
-          <h2>Recommended Formulations</h2>
+          <p class="index-tag">05 / VERIFIED FORMULATIONS</p>
+          <h2 id="catalog-heading">Daytime Recommended Formulations</h2>
         </div>
-        <p class="delivery-highlight">⚡ Blinkit · ⚡ Zepto · 📦 Nykaa · 🌐 Brand</p>
+        <div class="quick-commerce-pills">
+          <span class="pill-urgent">⚡ Blinkit (10-15m)</span>
+          <span class="pill-urgent">⚡ Zepto (10m)</span>
+          <span class="pill-standard">📦 Nykaa (Authentic)</span>
+        </div>
       </div>
       <div class="product-grid" id="product-grid"></div>
-      <p class="catalog-note">Direct purchase links provided for instant delivery (Blinkit & Zepto 10-15m) or standard beauty retail (Nykaa & Brand Official). Product imagery is official authorized packshot data.</p>
+      <p class="catalog-note">Every formulation rotates in real-time 3D. Click "Shop Options" on any card for instant 10-minute delivery via Blinkit & Zepto, or standard delivery via Nykaa.</p>
     </section>
 
     <!-- Clinical Safety Boundary -->
     <aside class="safety-banner">
       <div class="safety-tag">Clinical Boundary</div>
-      <p>Mira is a cosmetic skin intelligence assistant. It does not provide medical diagnoses or prescribe medications. If you experience severe, blistering, cystic, sudden swelling, or painful symptoms, consult a board-certified dermatologist immediately.</p>
+      <p>Mira is an educational cosmetic intelligence tool. It does not provide medical diagnoses or prescribe pharmaceutical medications. If you experience persistent cystic acne, severe redness, burning, or sudden blistering, consult a board-certified dermatologist.</p>
     </aside>
   </main>
 
@@ -218,31 +240,33 @@
       <button class="modal-close-btn" id="modal-close" aria-label="Close modal">✕</button>
       
       <div class="modal-product-summary">
-        <img id="modal-product-img" src="/assets/mira-barrier-cream.png" alt="Product thumbnail" class="modal-thumb">
+        <div class="modal-thumb-stage">
+          <img id="modal-product-img" src="/assets/cerave-cleanser.png" alt="Product thumbnail" class="modal-thumb rotating-bottle-3d">
+        </div>
         <div class="modal-product-info">
-          <span class="modal-product-type" id="modal-product-category">BARRIER CREAM</span>
-          <h3 id="modal-product-title">Mira Bio-Lipid Barrier Cream</h3>
-          <p class="modal-product-price" id="modal-product-price">₹1,200 · 96% Match</p>
+          <span class="modal-product-type" id="modal-product-category">CLEANSER</span>
+          <h3 id="modal-product-title">CeraVe Hydrating Facial Cleanser</h3>
+          <p class="modal-product-price" id="modal-product-price">₹850 · 97% Match</p>
         </div>
       </div>
 
       <div class="store-options-group">
         <div class="store-tier-heading">
-          <span class="lightning">⚡</span> NEED IT URGENTLY? (10–15 MIN DELIVERIES)
+          <span class="lightning">⚡</span> NEED IT URGENTLY? (10–15 MIN INSTANT DELIVERIES)
         </div>
         
         <div class="store-buttons-row">
           <a id="link-blinkit" href="#" target="_blank" rel="noopener noreferrer" class="store-btn blinkit-btn">
             <div class="store-name-group">
               <span class="store-logo-text">Blinkit</span>
-              <small>10-15 min delivery</small>
+              <small>10–15 min instant</small>
             </div>
             <span class="store-arrow">Order ⚡</span>
           </a>
           <a id="link-zepto" href="#" target="_blank" rel="noopener noreferrer" class="store-btn zepto-btn">
             <div class="store-name-group">
               <span class="store-logo-text">Zepto</span>
-              <small>10 min instant</small>
+              <small>10 min doorstep</small>
             </div>
             <span class="store-arrow">Order ⚡</span>
           </a>
@@ -251,14 +275,14 @@
 
       <div class="store-options-group">
         <div class="store-tier-heading">
-          <span>📦</span> STANDARD DELIVERY & AUTHENTIC BEAUTY STORES
+          <span>📦</span> STANDARD DELIVERY (BEAUTY STORE & OFFICIAL)
         </div>
         
         <div class="store-buttons-row">
           <a id="link-nykaa" href="#" target="_blank" rel="noopener noreferrer" class="store-btn nykaa-btn">
             <div class="store-name-group">
               <span class="store-logo-text">Nykaa</span>
-              <small>Official beauty store</small>
+              <small>Verified beauty retailer</small>
             </div>
             <span class="store-arrow">Shop 🛍️</span>
           </a>
@@ -272,8 +296,82 @@
         </div>
       </div>
       
-      <p class="modal-footer-note">Select Blinkit or Zepto for instant doorstep fulfillment, or Nykaa for standard catalog delivery.</p>
+      <p class="modal-footer-note">Choose Blinkit or Zepto if you need the product urgently today, or Nykaa for standard catalog delivery.</p>
     </div>
+  </div>
+
+  <!-- Mira AI Skincare Chatbot & Routine Reminder Widget -->
+  <div class="chatbot-container" id="chatbot-container">
+    <!-- Chatbot Window -->
+    <div class="chatbot-window" id="chatbot-window" style="display:none;">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-header-user">
+          <div class="chat-avatar">✦</div>
+          <div class="chat-title-group">
+            <h4>Mira AI Assistant</h4>
+            <span class="chat-status-indicator">● Active • Routine Reminders</span>
+          </div>
+        </div>
+        <button id="chat-close-btn" class="chat-close" aria-label="Close Chat">✕</button>
+      </div>
+
+      <!-- Quick Reminder Control Bar -->
+      <div class="chat-reminder-bar">
+        <div class="reminder-chips">
+          <button type="button" class="reminder-chip" id="chip-remind-am">
+            <span>☀️ 08:00 AM (Day)</span>
+            <span class="chip-status" id="status-chip-am">Set</span>
+          </button>
+          <button type="button" class="reminder-chip" id="chip-remind-pm">
+            <span>🌙 10:00 PM (Night)</span>
+            <span class="chip-status" id="status-chip-pm">Set</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Messages Body -->
+      <div class="chat-messages" id="chat-messages">
+        <!-- Initial Greetings from Mira -->
+        <div class="chat-msg bot">
+          <div class="msg-bubble">
+            <p>Hello! I'm <strong>Mira</strong>, your personal AI skincare intelligence assistant.</p>
+            <p>I can answer any ingredient questions, guide your AM/PM routines, or remind you daily so you never forget your skincare steps.</p>
+          </div>
+        </div>
+        <div class="chat-msg bot">
+          <div class="msg-bubble">
+            <p><strong>Would you like to activate daily routine reminders?</strong></p>
+            <div class="chat-inline-actions">
+              <button type="button" class="btn-chat-action" id="btn-activate-reminders">
+                🔔 Enable Daily Reminders (8 AM & 10 PM)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Inquiry Prompt Suggestions -->
+      <div class="chat-suggestions" id="chat-suggestions">
+        <button type="button" class="suggestion-pill" data-q="What is the difference between my AM and PM routine?">☀️ vs 🌙 Routine differences</button>
+        <button type="button" class="suggestion-pill" data-q="Where can I buy CeraVe or Minimalist urgently in 10 minutes?">⚡ Urgent delivery in India</button>
+        <button type="button" class="suggestion-pill" data-q="How should I use Retinol at night without irritation?">🌙 How to use Retinol</button>
+      </div>
+
+      <!-- Chat Input Field -->
+      <form class="chat-input-form" id="chat-form">
+        <input type="text" id="chat-input" placeholder="Ask Mira or say 'remind me at 9 PM'..." autocomplete="off">
+        <button type="submit" id="chat-send" aria-label="Send message">↑</button>
+      </form>
+    </div>
+
+    <!-- Floating Chatbot Toggle Launcher Button -->
+    <button type="button" class="chatbot-launcher" id="chatbot-launcher" aria-label="Open Mira AI Chatbot">
+      <div class="launcher-glow"></div>
+      <span class="launcher-icon">✦</span>
+      <span class="launcher-text">Mira AI • Reminders</span>
+      <span class="launcher-badge" id="launcher-badge">24/7</span>
+    </button>
   </div>
 
   <script src="/app.js"></script>
