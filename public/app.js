@@ -22,6 +22,7 @@ const goalsInput = document.querySelector('#goals');
 const sensitivitiesInput = document.querySelector('#sensitivities');
 const budgetInput = document.querySelector('#budget');
 const analysisStatus = document.querySelector('#analysis-status');
+const budgetPresetChips = document.querySelectorAll('.budget-chip');
 
 // DOM Elements: Showcase Card (Reference Image Match)
 const showcaseView = document.querySelector('#showcase-view');
@@ -33,11 +34,15 @@ const heroToggleDay = document.querySelector('#hero-toggle-day');
 const heroToggleNight = document.querySelector('#hero-toggle-night');
 const btnHeroShop = document.querySelector('#btn-hero-shop');
 const btnScanAgain = document.querySelector('#btn-scan-again');
+const ufoProductsGrid = document.querySelector('#ufo-products-grid');
+const ufoCatalogTitle = document.querySelector('#ufo-catalog-title');
 
 // DOM Elements: Combined Sequential Routine Section
 const routineSection = document.querySelector('#routine-section');
 const tabDayBtn = document.querySelector('#tab-day-btn');
 const tabNightBtn = document.querySelector('#tab-night-btn');
+const tabDayBadge = document.querySelector('#tab-day-badge');
+const tabNightBadge = document.querySelector('#tab-night-badge');
 const routineTabsContainer = document.querySelector('#routine-tabs-container');
 const dayPanel = document.querySelector('#day-routine-panel');
 const nightPanel = document.querySelector('#night-routine-panel');
@@ -638,8 +643,66 @@ function renderSequentialProtocol() {
     `).join('');
   }
 
+  // Update step badges if elements exist
+  if (tabDayBadge) tabDayBadge.textContent = `${dayProducts.length} Steps`;
+  if (tabNightBadge) tabNightBadge.textContent = `${nightProducts.length} Steps`;
+
   // Wire up all "Shop Options" buttons
   document.querySelectorAll('.btn-step-shop').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-mode');
+      const idx = parseInt(btn.getAttribute('data-idx'), 10);
+      const list = mode === 'day' ? dayProducts : nightProducts;
+      openStoreModal(list[idx]);
+    });
+  });
+}
+
+// =============================================================================
+// UFO 3D TURNTABLE CATALOG GRID RENDERING (SECTION 04)
+// =============================================================================
+
+function renderUfoCatalogGrid() {
+  if (!ufoProductsGrid) return;
+  const dayProducts = (catalogData.daytime && catalogData.daytime.length) ? catalogData.daytime : defaultCatalog.daytime;
+  const nightProducts = (catalogData.nighttime && catalogData.nighttime.length) ? catalogData.nighttime : defaultCatalog.nighttime;
+  const activeProducts = activeMode === 'day' ? dayProducts : nightProducts;
+
+  if (ufoCatalogTitle) {
+    ufoCatalogTitle.textContent = activeMode === 'day'
+      ? '☀️ Daytime Protocol Formulations (3D UFO Turntable Showcase)'
+      : '🌙 Nighttime Protocol Formulations (3D UFO Turntable Showcase)';
+  }
+
+  ufoProductsGrid.innerHTML = activeProducts.map((p, idx) => `
+    <article class="ufo-mini-card">
+      <div class="ufo-mini-stage">
+        <div class="ufo-mini-star s1"></div>
+        <div class="ufo-mini-star s2"></div>
+        <div class="ufo-mini-light-cone"></div>
+        <div class="ufo-mini-ring"></div>
+        <div class="ufo-mini-bottle-wrap">
+          <img class="ufo-mini-bottle" src="${p.imageUrl}" alt="${p.name}" loading="lazy">
+        </div>
+        <div class="ufo-mini-pedestal"></div>
+      </div>
+      <div class="ufo-mini-details">
+        <div class="ufo-mini-meta-row">
+          <span class="ufo-mini-step-pill">${p.phase || `STEP ${p.stepNumber || idx + 1}`}</span>
+          <span class="ufo-mini-match">${p.matchRate || '96% MATCH'}</span>
+        </div>
+        <h4 class="ufo-mini-name">${p.name}</h4>
+        <div class="ufo-mini-price">${p.price}</div>
+        <div class="ufo-mini-actions">
+          <button type="button" class="btn-ufo-shop" data-id="${p.id}" data-idx="${idx}" data-mode="${activeMode}">
+            <span>SHOP NOW →</span>
+          </button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+
+  ufoProductsGrid.querySelectorAll('.btn-ufo-shop').forEach(btn => {
     btn.addEventListener('click', () => {
       const mode = btn.getAttribute('data-mode');
       const idx = parseInt(btn.getAttribute('data-idx'), 10);
@@ -708,6 +771,7 @@ function switchMode(mode) {
     : ((catalogData.nighttime && catalogData.nighttime.length) ? catalogData.nighttime : defaultCatalog.nighttime);
 
   updateHeroShowcase(products[0]);
+  renderUfoCatalogGrid();
 }
 
 // Event Listeners for Routine Tabs
@@ -717,6 +781,39 @@ if (tabNightBtn) tabNightBtn.addEventListener('click', () => switchMode('night')
 // Event Listeners for Hero Showcase Toggles
 if (heroToggleDay) heroToggleDay.addEventListener('click', () => switchMode('day'));
 if (heroToggleNight) heroToggleNight.addEventListener('click', () => switchMode('night'));
+
+// =============================================================================
+// BUDGET PRESET CHIPS WIRING
+// =============================================================================
+
+if (budgetPresetChips && budgetPresetChips.length) {
+  budgetPresetChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      budgetPresetChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const val = chip.getAttribute('data-budget');
+      if (budgetInput) {
+        budgetInput.value = val === '1000' ? '₹1,000' : val === '4000' ? '₹4,000' : '₹2,500';
+      }
+    });
+  });
+}
+
+if (budgetInput) {
+  budgetInput.addEventListener('input', () => {
+    const raw = budgetInput.value.replace(/,/g, '');
+    const num = parseInt(raw.match(/\d+/)?.[0] || '0', 10);
+    budgetPresetChips.forEach(chip => {
+      const chipVal = parseInt(chip.getAttribute('data-budget'), 10);
+      if (num > 0) {
+        if (num <= 1400 && chipVal === 1000) chip.classList.add('active');
+        else if (num >= 3400 && chipVal === 4000) chip.classList.add('active');
+        else if (num > 1400 && num < 3400 && chipVal === 2500) chip.classList.add('active');
+        else chip.classList.remove('active');
+      }
+    });
+  });
+}
 
 // =============================================================================
 // FORM SUBMISSION & AUTOMATIC SCROLL TO GENERATED SKINCARE ROUTINE
@@ -751,9 +848,10 @@ if (analyseBtn) {
       
       const analysis = data.analysis || defaultAnalysis;
 
-      // Render the updated protocol
+      // Render the updated protocol & 3D UFO showcases
       renderSequentialProtocol();
       switchMode(activeMode);
+      renderUfoCatalogGrid();
 
       if (analysisStatus) {
         analysisStatus.textContent = analysis.careLevel === 'professional'
@@ -761,15 +859,23 @@ if (analyseBtn) {
           : analysis.summary;
       }
 
-      // Automatically and smoothly scroll directly to the generated skincare routine section!
+      // Automatically jump directly to the generated skincare routine section!
       const targetSection = document.querySelector('#routine-section');
       if (targetSection) {
         targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     } catch (error) {
-      console.warn('API analyze error, using default protocol:', error);
+      console.warn('API analyze error, using tier protocol:', error);
+      try {
+        const catRes = await fetch(`/api/catalog?budget=${encodeURIComponent(payload.budget)}`);
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          if (catData.catalog) catalogData = catData.catalog;
+        }
+      } catch {}
       renderSequentialProtocol();
       switchMode(activeMode);
+      renderUfoCatalogGrid();
       if (analysisStatus) {
         analysisStatus.textContent = 'Active protocol generated from skin profile preferences.';
       }

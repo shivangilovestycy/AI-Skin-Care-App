@@ -165,12 +165,21 @@ button, input, select {
   color: var(--silver-400);
 }
 
-/* Hero Section */
+/* Hero Section (Liquid Chrome Silk Metallic Background) */
 .hero {
+  position: relative;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  min-height: 540px;
+  min-height: 580px;
   border-bottom: 1px solid var(--border-subtle);
+  background-color: #07080b;
+  background-image: 
+    linear-gradient(135deg, rgba(7, 8, 11, 0.84) 0%, rgba(13, 15, 20, 0.48) 50%, rgba(7, 8, 11, 0.86) 100%),
+    url('/assets/hero-silver-background.webp');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
 }
 
 .hero-copy {
@@ -178,6 +187,8 @@ button, input, select {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  z-index: 2;
 }
 
 .index-tag {
@@ -283,7 +294,8 @@ button, input, select {
 .hero-visual {
   position: relative;
   border-left: 1px solid var(--border-subtle);
-  background: radial-gradient(circle at 50% 45%, #131722 0%, #0a0c10 70%);
+  background: radial-gradient(circle at 50% 45%, rgba(19, 23, 34, 0.4) 0%, rgba(10, 12, 16, 0.8) 75%);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -450,6 +462,83 @@ button, input, select {
   color: #ffffff;
 }
 
+/* Budget Presets & Selection Chips */
+.budget-field-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.field-hint {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px !important;
+  color: var(--text-muted) !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+}
+
+.budget-preset-chips {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.budget-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.budget-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.budget-chip.active {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(180, 210, 245, 0.12) 100%);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 14px rgba(180, 210, 255, 0.22), inset 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+.budget-chip .chip-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--silver-100);
+}
+
+.budget-chip.active .chip-badge {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+}
+
+.budget-chip .chip-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.budget-chip.active .chip-label {
+  color: var(--silver-300);
+}
+
 .btn-build-routine {
   grid-column: span 2;
   background: var(--silver-200);
@@ -610,15 +699,19 @@ button, input, select {
   display: flex;
   align-items: center;
   justify-content: center;
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 
-/* Continuous Floating Levitation (Crystal-Clear Original Image, NO blur!) */
+/* Continuous 3D Turntable Rotation (Crystal-Clear Original Image, NO blur!) */
 .rotating-bottle-3d {
-  max-width: 170px;
-  max-height: 250px;
+  max-width: 175px;
+  max-height: 255px;
   object-fit: contain;
-  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.75));
-  animation: float-levitate 4.5s ease-in-out infinite;
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 16px rgba(180, 215, 255, 0.25));
+  animation: ufo-turntable-spin 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
   display: block;
 }
 
@@ -1060,9 +1153,11 @@ button, input, select {
   width: 100%;
   height: 100%;
   padding: 12px;
+  perspective: 1000px;
+  transform-style: preserve-3d;
 }
 
-/* Crystal-Clear Authentic Packshot: Large, Razor-Sharp, Zero Blur! */
+/* Crystal-Clear Authentic Packshot: 3D Turntable Spin, Razor-Sharp, Zero Blur! */
 .crisp-product-img {
   height: 195px;
   max-height: 200px;
@@ -1070,8 +1165,29 @@ button, input, select {
   max-width: 85%;
   object-fit: contain;
   filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
-  animation: float-levitate 4.5s ease-in-out infinite;
+  animation: ufo-turntable-spin 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
   display: block;
+}
+
+/* 3D Turntable Rotation Animation (Smooth continuous spin around Y-axis) */
+@keyframes ufo-turntable-spin {
+  0% {
+    transform: translateY(0px) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotateY(90deg) scale(0.96);
+  }
+  50% {
+    transform: translateY(0px) rotateY(180deg);
+  }
+  75% {
+    transform: translateY(-6px) rotateY(270deg) scale(0.96);
+  }
+  100% {
+    transform: translateY(0px) rotateY(360deg);
+  }
 }
 
 @keyframes float-levitate {
@@ -1081,6 +1197,257 @@ button, input, select {
   50% {
     transform: translateY(-7px);
   }
+}
+
+/* Jump to Showcase CTA inside Section 03 */
+.routine-jump-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.btn-jump-showcase {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-medium);
+  color: var(--silver-200);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.btn-jump-showcase:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--silver-300);
+  transform: translateY(-2px);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   UFO 3D TURNTABLE CATALOG GRID (SECTION 04)
+   ========================================================================== */
+
+.ufo-catalog-block {
+  width: 100%;
+  margin-top: 56px;
+  padding-top: 48px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.ufo-catalog-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.ufo-catalog-title {
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 600;
+  letter-spacing: -1.5px;
+  color: var(--silver-100);
+  margin-bottom: 8px;
+}
+
+.ufo-catalog-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.ufo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.ufo-mini-card {
+  position: relative;
+  border-radius: 24px;
+  background: radial-gradient(circle at 50% 25%, #151b29 0%, #0d1118 60%, #07090c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ufo-mini-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 25px rgba(180, 210, 255, 0.18);
+}
+
+.ufo-mini-stage {
+  position: relative;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, rgba(22, 28, 45, 0.6) 0%, rgba(10, 12, 17, 0.9) 80%);
+}
+
+.ufo-mini-light-cone {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 195px;
+  background: linear-gradient(to bottom, rgba(200, 230, 255, 0.3) 0%, rgba(160, 205, 255, 0.08) 60%, rgba(130, 180, 240, 0) 100%);
+  clip-path: polygon(28% 0%, 72% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ufo-mini-pedestal {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, #ffffff 0%, #ccd8e8 38%, #566882 72%, transparent 100%);
+  box-shadow: 0 0 24px rgba(200, 230, 255, 0.5), 0 0 45px rgba(130, 180, 250, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  z-index: 3;
+}
+
+.ufo-mini-ring {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(76deg);
+  width: 170px;
+  height: 170px;
+  border: 1px dashed rgba(200, 225, 255, 0.28);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.ufo-mini-star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.ufo-mini-star.s1 { width: 3px; height: 3px; top: 40px; left: 35px; opacity: 0.45; box-shadow: 0 0 6px #fff; }
+.ufo-mini-star.s2 { width: 4px; height: 4px; top: 85px; right: 30px; opacity: 0.65; box-shadow: 0 0 10px #b4d7ff; }
+
+.ufo-mini-bottle-wrap {
+  position: relative;
+  z-index: 5;
+  width: 140px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.ufo-mini-bottle {
+  max-width: 115px;
+  max-height: 170px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.8));
+  animation: ufo-turntable-spin 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.ufo-mini-details {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ufo-mini-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ufo-mini-step-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--silver-400);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.ufo-mini-match {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: #a8d5ff;
+}
+
+.ufo-mini-name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--silver-100);
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.ufo-mini-price {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.ufo-mini-actions {
+  margin-top: auto;
+}
+
+.btn-ufo-shop {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #ffffff 0%, #d4dde8 22%, #f5f8fc 45%, #9cb0c6 70%, #dce4ee 100%);
+  color: #0c0f16;
+  font-family: 'DM Mono', monospace;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 16px rgba(180, 210, 245, 0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-ufo-shop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(210, 230, 255, 0.4);
+  filter: brightness(1.05);
 }
 
 /* Card Content: Title, Price, Guidance, Tips */
