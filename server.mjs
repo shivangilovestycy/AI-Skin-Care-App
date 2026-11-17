@@ -3,7 +3,9 @@ import { stat } from "node:fs/promises";
 import { createReadStream, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { tiers, getCatalogForBudget, catalog as defaultCatalog } from "./api/catalog.js";
+import { tiers, getCatalogForBudget, catalog as defaultCatalog, buildPersonalizedRoutine } from "./api/catalog.js";
+import analyzeHandler from "./api/analyze.js";
+import catalogHandler from "./api/catalog.js";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 loadEnv(path.join(root, ".env"));
@@ -29,45 +31,6 @@ function json(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
-function demoResult(userContext = {}) {
-  const budget = userContext.budget || "";
-  const tier = getCatalogForBudget(budget);
-  const customBudget = budget ? `within your budget preference of ${budget} (${tier.name})` : `tailored to your ${tier.name}`;
-
-  const dayRoutine = tier.daytime.map(p => ({
-    stepNumber: p.stepNumber,
-    step: p.stepTitle,
-    guidance: p.match,
-    category: p.category,
-    recommendedProduct: p.name,
-    price: p.price,
-    imageUrl: p.imageUrl
-  }));
-
-  const nightRoutine = tier.nighttime.map(p => ({
-    stepNumber: p.stepNumber,
-    step: p.stepTitle,
-    guidance: p.match,
-    category: p.category,
-    recommendedProduct: p.name,
-    price: p.price,
-    imageUrl: p.imageUrl
-  }));
-
-  return {
-    summary: `Your personalized clinical protocol, ${customBudget}. Engineered with distinct daytime barrier shielding and nighttime cellular restoration routines.`,
-    visibleObservations: [
-      "Skin barrier shows mild daytime trans-epidermal moisture need",
-      "Balanced pore clarity suitable for targeted active ingredients"
-    ],
-    careLevel: "routine",
-    caution: "Always patch test new actives on your inner forearm. If stinging, persistent redness, or swelling occurs, discontinue use immediately.",
-    dayRoutine,
-    nightRoutine,
-    selectedTier: tier
-  };
-}
-
 function sendFile(req, res) {
   const requestPath = req.url === "/" ? "/index.html" : req.url.split("?")[0];
   const clean = path.posix.join("/public", requestPath);
@@ -88,43 +51,12 @@ function sendFile(req, res) {
 http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
-  if ((req.method === "GET" || req.method === "HEAD") && parsedUrl.pathname === "/api/catalog") {
-    const budgetParam = parsedUrl.searchParams.get("budget") || "";
-    const selectedTier = getCatalogForBudget(budgetParam);
-    return json(res, 200, {
-      tiers,
-      selectedTier,
-      catalog: selectedTier,
-      daytime: selectedTier.daytime,
-      nighttime: selectedTier.nighttime,
-      products: [...selectedTier.daytime, ...selectedTier.nighttime]
-    });
+  if (parsedUrl.pathname === "/api/catalog") {
+    return catalogHandler(req, res);
   }
 
-  if (req.method === "POST" && parsedUrl.pathname === "/api/analyze") {
-    let raw = "";
-    req.on("data", (part) => raw += part);
-    req.on("end", async () => {
-      try {
-        const body = JSON.parse(raw || "{}");
-        const selectedTier = getCatalogForBudget(body.budget);
-        json(res, 200, {
-          analysis: demoResult(body),
-          catalog: selectedTier,
-          products: [...selectedTier.daytime, ...selectedTier.nighttime],
-          selectedTier
-        });
-      } catch (error) {
-        const selectedTier = defaultCatalog;
-        json(res, 200, {
-          analysis: demoResult(),
-          catalog: selectedTier,
-          products: [...selectedTier.daytime, ...selectedTier.nighttime],
-          selectedTier
-        });
-      }
-    });
-    return;
+  if (parsedUrl.pathname === "/api/analyze") {
+    return analyzeHandler(req, res);
   }
 
   if (req.method === "GET" || req.method === "HEAD") return sendFile(req, res);

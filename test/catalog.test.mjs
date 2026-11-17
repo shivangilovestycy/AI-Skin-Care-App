@@ -30,3 +30,48 @@ assert(luxuryProductNames.includes("Clinique Moisture Surge 100H Hydrator"), "Cl
 });
 
 console.log("✓ Dynamic multi-tier catalog and budget selection tests passed");
+
+// Test: Select both "pigmentation" and "acne"
+import { buildPersonalizedRoutine } from "../api/catalog.js";
+
+const customRoutine = buildPersonalizedRoutine({
+  concerns: ["pigmentation", "acne"],
+  budget: "₹2,500"
+});
+
+// 1. Confirm each concern gets a distinct suited product
+const dayNames = customRoutine.daytime.map(p => p.name);
+const nightNames = customRoutine.nighttime.map(p => p.name);
+const allNames = [...dayNames, ...nightNames];
+
+assert(dayNames.some(name => name.includes("Tranexamic")), "Pigmentation must get Tranexamic Acid in Daytime");
+assert(nightNames.some(name => name.includes("Salicylic")), "Acne must get Salicylic Acid in Nighttime");
+assert(
+  dayNames.find(n => n.includes("Tranexamic")) !== nightNames.find(n => n.includes("Salicylic")),
+  "Pigmentation and Acne must receive completely DIFFERENT products"
+);
+
+// 2. Confirm Lip Product appears in both AM and PM
+assert(dayNames.some(name => name.toLowerCase().includes("lip")), "Lip product with SPF must appear in Daytime routine");
+assert(nightNames.some(name => name.toLowerCase().includes("lip")), "Hydrating lip balm/mask must appear in Nighttime routine");
+
+// 3. Confirm Zero Product Duplicates across the entire routine
+const uniqueNames = new Set(allNames);
+assert.strictEqual(allNames.length, uniqueNames.size, "Routine must not contain any repeated products");
+
+// 4. Confirm every product has a 'whyThisProduct' rationale
+[...customRoutine.daytime, ...customRoutine.nighttime].forEach(p => {
+  assert(p.whyThisProduct && p.whyThisProduct.length > 10, `Missing 'whyThisProduct' in ${p.name}`);
+});
+
+// 5. Confirm safety filtering for pregnancy: strictly excludes Retinol and Salicylic Acid
+const pregRoutine = buildPersonalizedRoutine({
+  concerns: ["pigmentation", "acne", "texture"],
+  budget: "₹2,500",
+  pregnantOrBreastfeeding: true
+});
+const pregNames = [...pregRoutine.daytime, ...pregRoutine.nighttime].map(p => p.name);
+assert(!pregNames.some(n => n.includes("Retinol")), "Retinol must be excluded during pregnancy/breastfeeding");
+assert(!pregNames.some(n => n.includes("Salicylic")), "High-strength Salicylic Acid must be excluded during pregnancy");
+
+console.log("✓ Pigmentation & acne distinct products, lip care, and safety tests passed successfully");

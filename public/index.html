@@ -41,7 +41,7 @@
       <div class="hero-copy">
         <p class="index-tag">01 / BIOMETRIC FACE INPUT</p>
         <h1 class="hero-title">See what<br>your skin<br>needs</h1>
-        <p class="lede">Capture a selfie using your device camera. Receive a medical-grade, dual-sequence AM/PM routine with authentic products tailored to your skin and budget.</p>
+        <p class="lede">Capture a selfie using your device camera. Receive a personalized, dual-sequence AM/PM routine with authentic products tailored to your skin and budget.</p>
         
         <div class="camera-actions">
           <button id="open-camera" type="button" class="btn-primary-action">
@@ -79,54 +79,123 @@
       </div>
     </section>
 
-    <!-- Context Intake Form -->
+    <!-- Context Intake Form with Dark Translucent Panel -->
     <section class="intake" id="intake-section" aria-labelledby="profile-title">
-      <div class="intake-intro">
-        <p class="index-tag">02 / CUSTOMER PREFERENCES</p>
-        <h2 id="profile-title">Make the guidance fit you</h2>
-        <p class="intake-sub">Adjust your preferences. Customise your budget freely with zero restrictions.</p>
-      </div>
-      <div class="fields-grid">
-        <label class="field-item">
-          <span>Age range</span>
-          <select id="ageRange">
-            <option value="">Select range</option>
-            <option>Under 18</option>
-            <option>18–24</option>
-            <option>25–34</option>
-            <option>35–44</option>
-            <option>45+</option>
-          </select>
-        </label>
-        <label class="field-item">
-          <span>Skin goals & concerns</span>
-          <input id="goals" placeholder="e.g. acne, barrier repair, dryness, texture">
-        </label>
-        <label class="field-item">
-          <span>Sensitivities & allergies</span>
-          <input id="sensitivities" placeholder="e.g. fragrance, essential oils, none">
-        </label>
-        <div class="field-item budget-field-wrapper">
-          <div class="field-header-row">
-            <span>Budget preference</span>
-            <span class="field-hint">Select a tier or enter custom amount</span>
-          </div>
-          <div class="budget-preset-chips" id="budget-presets">
-            <button type="button" class="budget-chip" data-budget="1000">
-              <span class="chip-badge">≤ ₹1,000</span>
-              <span class="chip-label">Value Budget</span>
-            </button>
-            <button type="button" class="budget-chip active" data-budget="2500">
-              <span class="chip-badge">₹2,500</span>
-              <span class="chip-label">Clinical Core</span>
-            </button>
-            <button type="button" class="budget-chip" data-budget="4000">
-              <span class="chip-badge">≥ ₹4,000</span>
-              <span class="chip-label">Prestige Luxury</span>
-            </button>
-          </div>
-          <input id="budget" type="text" value="₹2,500" placeholder="e.g. ₹1,000, ₹2,500, ₹4,000, or enter custom amount">
+      <div class="dark-preferences-panel">
+        <div class="intake-intro">
+          <p class="index-tag">02 / CUSTOMER PREFERENCES & CLINICAL INTAKE</p>
+          <h2 id="profile-title">Make the guidance fit you</h2>
+          <p class="intake-sub">Adjust your preferences below. Confirmed observations and clinical safety questions guide your custom protocol.</p>
         </div>
+
+        <!-- Concern Confirmation Step: What Mira noticed -->
+        <div class="mira-noticed-block" id="mira-noticed-card">
+          <div class="mira-noticed-header">
+            <div class="noticed-title-wrap">
+              <span class="pulse-spark">✦</span>
+              <h3>What Mira noticed</h3>
+            </div>
+            <span class="estimate-pill">Estimate, not a diagnosis</span>
+          </div>
+          <p class="noticed-explainer">Preliminary visual assessment from your biometric input. Untick wrong observations or tap to add missing concerns. Your routine is built strictly from this confirmed list:</p>
+          <div class="concern-chips-grid" id="concern-chips-container">
+            <button type="button" class="concern-chip" data-concern="oiliness">
+              <span class="chip-check">✓</span> <span class="chip-name">Oiliness</span>
+            </button>
+            <button type="button" class="concern-chip" data-concern="redness">
+              <span class="chip-check">✓</span> <span class="chip-name">Redness</span>
+            </button>
+            <button type="button" class="concern-chip active" data-concern="dark spots">
+              <span class="chip-check">✓</span> <span class="chip-name">Dark Spots (Pigmentation)</span>
+            </button>
+            <button type="button" class="concern-chip" data-concern="dryness">
+              <span class="chip-check">✓</span> <span class="chip-name">Dryness</span>
+            </button>
+            <button type="button" class="concern-chip" data-concern="texture">
+              <span class="chip-check">✓</span> <span class="chip-name">Texture</span>
+            </button>
+            <button type="button" class="concern-chip active" data-concern="acne">
+              <span class="chip-check">✓</span> <span class="chip-name">Acne</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="fields-grid">
+          <label class="field-item">
+            <span>Age range</span>
+            <select id="ageRange">
+              <option value="">Select range</option>
+              <option>Under 18</option>
+              <option selected>18–24</option>
+              <option>25–34</option>
+              <option>35–44</option>
+              <option>45+</option>
+            </select>
+          </label>
+          <label class="field-item">
+            <span>Skin goals & concerns</span>
+            <input id="goals" value="pigmentation, acne" placeholder="e.g. acne, barrier repair, dryness, texture">
+          </label>
+          <label class="field-item">
+            <span>Sensitivities & allergies</span>
+            <input id="sensitivities" placeholder="e.g. fragrance, essential oils, none">
+          </label>
+          <div class="field-item budget-field-wrapper">
+            <div class="field-header-row">
+              <span>Budget preference</span>
+              <span class="field-hint">Select a tier or enter custom amount</span>
+            </div>
+            <div class="budget-preset-chips" id="budget-presets">
+              <button type="button" class="budget-chip" data-budget="1000">
+                <span class="chip-badge">≤ ₹1,000</span>
+                <span class="chip-label">Value Budget</span>
+              </button>
+              <button type="button" class="budget-chip active" data-budget="2500">
+                <span class="chip-badge">₹2,500</span>
+                <span class="chip-label">Clinical Core</span>
+              </button>
+              <button type="button" class="budget-chip" data-budget="4000">
+                <span class="chip-badge">≥ ₹4,000</span>
+                <span class="chip-label">Prestige Luxury</span>
+              </button>
+            </div>
+            <input id="budget" type="text" value="₹2,500" placeholder="e.g. ₹1,000, ₹2,500, ₹4,000, or enter custom amount">
+          </div>
+        </div>
+
+        <!-- Clinical Safety Questions -->
+        <div class="safety-form-section">
+          <div class="safety-section-title">
+            <span class="safety-icon">🛡️</span>
+            <h4>Clinical Safety & Ingredient Compatibility</h4>
+          </div>
+          <div class="safety-grid">
+            <label class="field-item">
+              <span>Pregnant or breastfeeding?</span>
+              <select id="safetyPregnant">
+                <option value="no" selected>No</option>
+                <option value="yes">Yes (Strictly excludes Retinoids & High % BHA)</option>
+              </select>
+            </label>
+            <label class="field-item">
+              <span>Current skin medication</span>
+              <input id="safetyMedication" placeholder="e.g. None, Tretinoin, Oral Accutane, Clindamycin">
+            </label>
+            <label class="field-item">
+              <span>Very sensitive skin?</span>
+              <select id="safetySensitive">
+                <option value="no" selected>Normal / Resilient</option>
+                <option value="mild">Mildly Sensitive</option>
+                <option value="very">Very Sensitive (Excludes harsh actives)</option>
+              </select>
+            </label>
+            <label class="field-item">
+              <span>Past product reactions</span>
+              <input id="safetyReactions" placeholder="e.g. None, broke out from fragrance, benzoyl peroxide redness">
+            </label>
+          </div>
+        </div>
+
         <button id="analyse" class="btn-build-routine">
           <span class="btn-star-icon">✦</span> <span>Generate Skincare Routine →</span>
         </button>
@@ -148,6 +217,33 @@
             <span class="pill-standard">📦 Nykaa (Authentic)</span>
           </div>
           <p id="analysis-status" class="analysis-status-pill">Select sequence below to inspect protocol</p>
+        </div>
+      </div>
+
+      <!-- Ingredient Conflict Check & Patch-Test Safety Indicators -->
+      <div class="safety-status-bar" id="safety-status-bar">
+        <div class="safety-badge conflict-check-badge">
+          <span class="badge-icon">✔</span>
+          <div class="badge-content">
+            <strong class="badge-label">Active Compatibility Check:</strong>
+            <span class="badge-detail" id="conflict-text">Safe Diurnal Separation (Tranexamic Acid in AM, Salicylic Acid in PM). Zero overlapping acid collisions.</span>
+          </div>
+        </div>
+        <div class="safety-badge patch-test-badge">
+          <span class="badge-icon">⚠️</span>
+          <div class="badge-content">
+            <strong class="badge-label">Clinical Patch-Test Reminder:</strong>
+            <span class="badge-detail" id="patch-test-text">Apply a dime-sized amount of any newly introduced active formulation behind the ear or on your inner forearm for 24h prior to facial application.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clinical Dermatologist Referral Notice -->
+      <div class="dermatologist-triage-box" id="dermo-notice-box">
+        <div class="triage-icon-wrap">🩺</div>
+        <div class="triage-body">
+          <h4 class="triage-heading">Clinical Dermatology Referral Advisory</h4>
+          <p class="triage-desc">Mira provides educational cosmetic intelligence. If you observe <strong>severe or painful cystic acne</strong>, an <strong>evolving or irregular mole</strong>, or <strong>sudden acute swelling or rash</strong>, immediately discontinue over-the-counter products and consult a board-certified dermatologist for in-person diagnostic evaluation and medical treatment.</p>
         </div>
       </div>
 
@@ -243,6 +339,74 @@
       </div>
 
       <p class="catalog-note">All formulations are 100% authentic original packshots. Click "Shop Options" on any step for instant 10-minute delivery via Blinkit & Zepto, or verified delivery via Nykaa.</p>
+    </section>
+
+    <!-- Section 05: Weekly Skin Progress Tracker -->
+    <section class="tracker-section" id="progress-tracker-section">
+      <div class="tracker-header">
+        <p class="index-tag">05 / WEEKLY SKIN PROGRESS TRACKER</p>
+        <h2 class="tracker-title">Track your barrier journey</h2>
+        <p class="tracker-subtitle">Compare weekly selfies side by side to monitor skin clarity, redness reduction, and hydration milestones.</p>
+      </div>
+
+      <div class="tracker-consent-box" id="tracker-consent-card">
+        <div class="consent-info-group">
+          <span class="lock-shield-icon">🔒</span>
+          <div>
+            <strong>Private Local Storage Only (Strict Opt-in)</strong>
+            <p>Your selfies are stored locally inside this device's browser only and are never uploaded or retained on remote servers. We ask your consent before saving any photo. You can delete your stored photos at any time.</p>
+          </div>
+        </div>
+        <div class="consent-action-row">
+          <button type="button" class="btn-consent-optin" id="btn-tracker-optin">
+            <span>✓ Enable Progress Tracker & Save Selfie</span>
+          </button>
+          <button type="button" class="btn-tracker-delete" id="btn-tracker-delete">
+            <span>🗑 Delete Stored Photos</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Side by Side Weekly Comparison -->
+      <div class="weekly-comparison-grid" id="tracker-comparison-grid">
+        <!-- Week 1 / Baseline Card -->
+        <div class="weekly-card" id="card-week-1">
+          <div class="weekly-card-header">
+            <span class="week-pill">WEEK 01 · BASELINE</span>
+            <span class="week-date" id="week1-date">Initial Scan</span>
+          </div>
+          <div class="weekly-img-wrap">
+            <img id="week1-img" src="" alt="Week 1 Baseline Selfie" style="display:none;">
+            <div class="weekly-empty-state" id="week1-placeholder">
+              <span class="empty-icon">📷</span>
+              <p>Baseline Selfie</p>
+              <small>Capture or upload a selfie to establish your week 1 baseline.</small>
+            </div>
+          </div>
+          <div class="weekly-card-footer">
+            <span class="status-indicator">● Baseline Established</span>
+          </div>
+        </div>
+
+        <!-- Current Week / Follow-up Card -->
+        <div class="weekly-card" id="card-week-2">
+          <div class="weekly-card-header">
+            <span class="week-pill">CURRENT · WEEK 02</span>
+            <span class="week-date" id="week2-date">In Progress</span>
+          </div>
+          <div class="weekly-img-wrap">
+            <img id="week2-img" src="" alt="Week 2 Follow-up Selfie" style="display:none;">
+            <div class="weekly-empty-state" id="week2-placeholder">
+              <span class="empty-icon">✨</span>
+              <p>Follow-up Scan</p>
+              <small>Retake your selfie after 7 days of your AM/PM routine to track visible progress.</small>
+            </div>
+          </div>
+          <div class="weekly-card-footer">
+            <span class="status-indicator">● Active Protocol Routine</span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Clinical Safety Boundary -->

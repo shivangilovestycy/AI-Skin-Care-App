@@ -24,6 +24,27 @@ const budgetInput = document.querySelector('#budget');
 const analysisStatus = document.querySelector('#analysis-status');
 const budgetPresetChips = document.querySelectorAll('.budget-chip');
 
+// DOM Elements: Concern Confirmation & Safety Questions
+const concernChips = document.querySelectorAll('.concern-chip');
+const safetyPregnantInput = document.querySelector('#safetyPregnant');
+const safetyMedicationInput = document.querySelector('#safetyMedication');
+const safetySensitiveInput = document.querySelector('#safetySensitive');
+const safetyReactionsInput = document.querySelector('#safetyReactions');
+
+// DOM Elements: Clinical Safety Status Bar
+const conflictText = document.querySelector('#conflict-text');
+const patchTestText = document.querySelector('#patch-test-text');
+
+// DOM Elements: Weekly Progress Tracker
+const btnTrackerOptin = document.querySelector('#btn-tracker-optin');
+const btnTrackerDelete = document.querySelector('#btn-tracker-delete');
+const week1Img = document.querySelector('#week1-img');
+const week1Placeholder = document.querySelector('#week1-placeholder');
+const week1Date = document.querySelector('#week1-date');
+const week2Img = document.querySelector('#week2-img');
+const week2Placeholder = document.querySelector('#week2-placeholder');
+const week2Date = document.querySelector('#week2-date');
+
 // DOM Elements: Showcase Card (Reference Image Match)
 const showcaseView = document.querySelector('#showcase-view');
 const stageProductImg = document.querySelector('#stage-product-img');
@@ -98,7 +119,8 @@ const defaultCatalog = {
       category: "Gentle Morning Cleanse",
       name: "CeraVe Hydrating Facial Cleanser",
       match: "Non-stripping lotion cleanser with 3 essential ceramides & hyaluronic acid for morning barrier protection.",
-      matchRate: "97% MATCH",
+      whyThisProduct: "Replenishes skin ceramides while gently washing away nocturnal sebum, ensuring non-stripping morning hydration.",
+      matchRate: "98% MATCH",
       price: "₹850",
       step: "01",
       timing: "Morning (AM)",
@@ -114,22 +136,23 @@ const defaultCatalog = {
     {
       id: "day-02",
       stepNumber: "02",
-      stepTitle: "Antioxidant & Sebum Balance",
+      stepTitle: "Anti-Pigmentation & Brightening Active",
       phase: "MORNING (AM) · STEP 02",
-      category: "Antioxidant & Sebum Balance",
-      name: "The Ordinary Niacinamide 10% + Zinc 1%",
-      match: "Controls excess daytime sebum, refines skin texture, and fortifies the lipid barrier under sunscreen.",
-      matchRate: "94% MATCH",
-      price: "₹600",
+      category: "Anti-Pigmentation & Brightening Serum",
+      name: "Minimalist Tranexamic Acid 3% + HPA",
+      match: "Specifically targets post-inflammatory hyperpigmentation and sun spots by curbing melanin transfer without photosensitizing skin.",
+      whyThisProduct: "Targets visible hyperpigmentation and dark spots by inhibiting melanin transfer without causing sun sensitivity.",
+      matchRate: "98% MATCH",
+      price: "₹649",
       step: "02",
       timing: "Morning (AM)",
-      usageTip: "Dispense 2–3 drops onto fingertips. Press gently into face and neck before moisturiser.",
-      imageUrl: "/assets/the-ordinary-niacinamide.png",
+      usageTip: "Dispense 2–3 drops onto clean face in the morning. Pat gently until absorbed before moisturiser.",
+      imageUrl: "/assets/minimalist-tranexamic.png",
       stores: {
-        blinkit: "https://blinkit.com/s/?q=the+ordinary+niacinamide",
-        zepto: "https://www.zeptonow.com/search?query=the+ordinary+niacinamide",
-        nykaa: "https://www.nykaa.com/search/result/?q=the+ordinary+niacinamide+10+zinc+1",
-        official: "https://theordinary.com/en-in/niacinamide-10-zinc-1-serum-100436.html"
+        blinkit: "https://blinkit.com/s/?q=minimalist+tranexamic+acid",
+        zepto: "https://www.zeptonow.com/search?query=minimalist+tranexamic+acid",
+        nykaa: "https://www.nykaa.com/search/result/?q=minimalist+tranexamic+acid+3",
+        official: "https://beminimalist.co/products/tranexamic-3-hpa"
       }
     },
     {
@@ -140,6 +163,7 @@ const defaultCatalog = {
       category: "Lightweight Barrier Moisture",
       name: "CeraVe Daily Moisturising Lotion",
       match: "Lightweight, oil-free hydration with MVE delivery technology for sustained 24-hour hydration.",
+      whyThisProduct: "Oil-free, lightweight MVE hydration formula that fortifies the lipid moisture barrier without clogging pores.",
       matchRate: "95% MATCH",
       price: "₹1,200",
       step: "03",
@@ -161,6 +185,7 @@ const defaultCatalog = {
       category: "Broad-Spectrum UV Shield",
       name: "Minimalist Multi-Vitamin SPF 50 PA++++",
       match: "Essential broad-spectrum protection infused with vitamins A, B, C & E. Leaves zero white cast and prevents photodamage.",
+      whyThisProduct: "Essential daily photoprotection infused with antioxidant vitamins to prevent UV-triggered melanin dark spots with zero white cast.",
       matchRate: "99% MATCH",
       price: "₹399",
       step: "04",
@@ -173,6 +198,28 @@ const defaultCatalog = {
         nykaa: "https://www.nykaa.com/search/result/?q=minimalist+multi+vitamin+spf+50",
         official: "https://beminimalist.co/products/multi-vitamin-spf-50"
       }
+    },
+    {
+      id: "day-05",
+      stepNumber: "05",
+      stepTitle: "Photoprotective Lip Shield",
+      phase: "MORNING (AM) · STEP 05",
+      category: "Photoprotective Lip Shield",
+      name: "Minimalist SPF 30 Lip Balm",
+      match: "Formulated with ceramides and broad-spectrum UV filters to shield delicate vermilion borders from sun dark marks.",
+      whyThisProduct: "Essential daytime lip photoprotection formulated with ceramides to shield delicate vermilion borders against UV hyperpigmentation.",
+      matchRate: "98% MATCH",
+      price: "₹299",
+      step: "05",
+      timing: "Morning (AM)",
+      usageTip: "Glide generously across lips every morning. Reapply before sun exposure.",
+      imageUrl: "/assets/minimalist-lip-spf.png",
+      stores: {
+        blinkit: "https://blinkit.com/s/?q=minimalist+lip+balm+spf+30",
+        zepto: "https://www.zeptonow.com/search?query=minimalist+lip+balm+spf+30",
+        nykaa: "https://www.nykaa.com/search/result/?q=minimalist+spf+30+lip+balm",
+        official: "https://beminimalist.co/products/spf-30-lip-balm"
+      }
     }
   ],
   nighttime: [
@@ -184,6 +231,7 @@ const defaultCatalog = {
       category: "Purifying Evening Cleanse",
       name: "Cetaphil Gentle Skin Cleanser",
       match: "Clinically proven formula with niacinamide & panthenol to melt away daily grime, sunscreen, and particulate pollution.",
+      whyThisProduct: "Dermatologist-recommended non-irritating wash that melts away sunscreen, makeup, and urban micro-pollution without stripping moisture.",
       matchRate: "96% MATCH",
       price: "₹399",
       step: "01",
@@ -200,22 +248,23 @@ const defaultCatalog = {
     {
       id: "night-02",
       stepNumber: "02",
-      stepTitle: "Cellular Renewal & Anti-Aging",
+      stepTitle: "Pore Clearing & Acne Clarifying Active",
       phase: "NIGHT (PM) · STEP 02",
-      category: "Cellular Renewal & Anti-Aging",
-      name: "The Ordinary Retinol 0.2% in Squalane",
-      match: "Pure active retinol in stabilizing squalane. Accelerates overnight cell turnover, clears microcomedones, and smoothes fine lines.",
-      matchRate: "93% MATCH",
-      price: "₹700",
+      category: "Pore Clearing & Acne Clarifying Serum",
+      name: "Minimalist Salicylic Acid 2% Serum",
+      match: "Penetrates deep into lipid-rich sebaceous pores to clear active acne, blackheads, and comedones.",
+      whyThisProduct: "Deeply penetrates lipid-rich follicles to dissolve acne-causing plugs, blackheads, and active inflammation without drying skin.",
+      matchRate: "97% MATCH",
+      price: "₹549",
       step: "02",
       timing: "Night (PM)",
-      usageTip: "Apply 2–3 drops at night on dry skin 2–3 times a week. Avoid eye area and always use daytime SPF.",
-      imageUrl: "/assets/the-ordinary-retinol.png",
+      usageTip: "Apply 2–3 drops at night on dry skin. Gently pat into pores before barrier cream.",
+      imageUrl: "/assets/minimalist-salicylic.png",
       stores: {
-        blinkit: "https://blinkit.com/s/?q=the+ordinary+retinol",
-        zepto: "https://www.zeptonow.com/search?query=the+ordinary+retinol",
-        nykaa: "https://www.nykaa.com/search/result/?q=the+ordinary+retinol+0.2+in+squalane",
-        official: "https://theordinary.com/en-in/retinol-02pct-in-squalane-serum-100439.html"
+        blinkit: "https://blinkit.com/s/?q=minimalist+salicylic+acid",
+        zepto: "https://www.zeptonow.com/search?query=minimalist+salicylic+acid",
+        nykaa: "https://www.nykaa.com/search/result/?q=minimalist+salicylic+acid+2",
+        official: "https://beminimalist.co/products/salicylic-acid-2"
       }
     },
     {
@@ -226,6 +275,7 @@ const defaultCatalog = {
       category: "Deep Overnight Barrier Recovery",
       name: "CeraVe Moisturising Cream (16 oz)",
       match: "Rich ceramide complex with hyaluronic acid to seal in nighttime actives and rebuild the stratum corneum while you sleep.",
+      whyThisProduct: "Rich ceramide barrier repair matrix that seals in nocturnal actives and prevents transepidermal water loss overnight.",
       matchRate: "98% MATCH",
       price: "₹1,450",
       step: "03",
@@ -237,6 +287,28 @@ const defaultCatalog = {
         zepto: "https://www.zeptonow.com/search?query=cerave+moisturising+cream",
         nykaa: "https://www.nykaa.com/search/result/?q=cerave+moisturising+cream",
         official: "https://www.cerave.com/skincare/moisturizers/moisturizing-cream"
+      }
+    },
+    {
+      id: "night-04",
+      stepNumber: "04",
+      stepTitle: "Overnight Lip Cellular Mask",
+      phase: "NIGHT (PM) · STEP 04",
+      category: "Overnight Lip Cellular Mask",
+      name: "Minimalist L-Ascorbic + Peptide Lip Mask",
+      match: "Intense overnight peptide and antioxidant lip conditioning to seal moisture barrier during deep sleep.",
+      whyThisProduct: "Intense overnight peptide and antioxidant lip treatment that repairs chapped skin and restores moisture barrier while you sleep.",
+      matchRate: "97% MATCH",
+      price: "₹399",
+      step: "04",
+      timing: "Night (PM)",
+      usageTip: "Apply a generous layer to lips before sleeping as the final restorative step.",
+      imageUrl: "/assets/minimalist-lip-mask.png",
+      stores: {
+        blinkit: "https://blinkit.com/s/?q=minimalist+lip+treatment",
+        zepto: "https://www.zeptonow.com/search?query=minimalist+lip+treatment",
+        nykaa: "https://www.nykaa.com/search/result/?q=minimalist+peptide+lip+mask",
+        official: "https://beminimalist.co/products/peptide-lip-mask"
       }
     }
   ]
@@ -567,7 +639,12 @@ function renderSequentialProtocol() {
             <h4 class="product-name">${p.name}</h4>
             <span class="product-price-tag">${p.price}</span>
           </div>
-          <p class="product-clinical-guidance">${p.match}</p>
+
+          <!-- One-line Why This Product Rationale -->
+          <div class="product-rationale-box">
+            <span class="why-label-pill">WHY THIS PRODUCT</span>
+            <p class="why-text">${p.whyThisProduct || p.match}</p>
+          </div>
 
           <div class="step-usage-tips">
             <div class="tip-item">
@@ -588,7 +665,7 @@ function renderSequentialProtocol() {
     `).join('');
   }
 
-  // Render Nighttime Sequential Cards (3 Steps)
+  // Render Nighttime Sequential Cards (3 or 4 Steps)
   if (nightSequenceGrid) {
     nightSequenceGrid.innerHTML = nightProducts.map((p, idx) => `
       <article class="protocol-step-card">
@@ -620,7 +697,12 @@ function renderSequentialProtocol() {
             <h4 class="product-name">${p.name}</h4>
             <span class="product-price-tag">${p.price}</span>
           </div>
-          <p class="product-clinical-guidance">${p.match}</p>
+
+          <!-- One-line Why This Product Rationale -->
+          <div class="product-rationale-box">
+            <span class="why-label-pill">WHY THIS PRODUCT</span>
+            <p class="why-text">${p.whyThisProduct || p.match}</p>
+          </div>
 
           <div class="step-usage-tips">
             <div class="tip-item">
@@ -759,6 +841,117 @@ if (budgetInput) {
 }
 
 // =============================================================================
+// CONCERN CHIPS WIRING ("WHAT MIRA NOTICED" STEP)
+// =============================================================================
+
+function getConfirmedConcerns() {
+  const activeChips = Array.from(document.querySelectorAll('.concern-chip.active'));
+  return activeChips.map(c => c.getAttribute('data-concern'));
+}
+
+function syncGoalsFromChips() {
+  const confirmed = getConfirmedConcerns();
+  if (goalsInput) {
+    goalsInput.value = confirmed.join(', ');
+  }
+}
+
+if (concernChips && concernChips.length) {
+  concernChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('active');
+      syncGoalsFromChips();
+    });
+  });
+}
+
+// =============================================================================
+// WEEKLY SKIN PROGRESS TRACKER LOGIC (LOCAL PRIVACY FIRST)
+// =============================================================================
+
+function loadWeeklyProgress() {
+  try {
+    const dataStr = localStorage.getItem('mira_weekly_progress');
+    const consent = localStorage.getItem('mira_tracker_consent') === 'true';
+
+    if (btnTrackerOptin) {
+      if (consent) {
+        btnTrackerOptin.classList.add('active');
+        btnTrackerOptin.innerHTML = '<span>✓ Progress Tracker Active (Consent Granted)</span>';
+      } else {
+        btnTrackerOptin.classList.remove('active');
+        btnTrackerOptin.innerHTML = '<span>✓ Enable Progress Tracker & Save Selfie</span>';
+      }
+    }
+
+    if (!dataStr || !consent) {
+      if (week1Img) { week1Img.style.display = 'none'; week1Img.src = ''; }
+      if (week1Placeholder) week1Placeholder.style.display = 'flex';
+      if (week2Img) { week2Img.style.display = 'none'; week2Img.src = ''; }
+      if (week2Placeholder) week2Placeholder.style.display = 'flex';
+      return;
+    }
+
+    const progress = JSON.parse(dataStr);
+    if (progress.week1 && week1Img) {
+      week1Img.src = progress.week1.image;
+      week1Img.style.display = 'block';
+      if (week1Placeholder) week1Placeholder.style.display = 'none';
+      if (week1Date) week1Date.textContent = progress.week1.date || 'Baseline';
+    }
+
+    if (progress.week2 && week2Img) {
+      week2Img.src = progress.week2.image;
+      week2Img.style.display = 'block';
+      if (week2Placeholder) week2Placeholder.style.display = 'none';
+      if (week2Date) week2Date.textContent = progress.week2.date || 'Current Week';
+    }
+  } catch (err) {
+    console.warn('Weekly progress load note:', err);
+  }
+}
+
+if (btnTrackerOptin) {
+  btnTrackerOptin.addEventListener('click', () => {
+    localStorage.setItem('mira_tracker_consent', 'true');
+    btnTrackerOptin.classList.add('active');
+    btnTrackerOptin.innerHTML = '<span>✓ Progress Tracker Active (Consent Granted)</span>';
+
+    // Save current selfie if available
+    if (imageData) {
+      try {
+        const existing = JSON.parse(localStorage.getItem('mira_weekly_progress') || '{}');
+        const nowFormatted = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        if (!existing.week1) {
+          existing.week1 = { image: imageData, date: `${nowFormatted} (Baseline)` };
+        } else {
+          existing.week2 = { image: imageData, date: `${nowFormatted} (Follow-up)` };
+        }
+        localStorage.setItem('mira_weekly_progress', JSON.stringify(existing));
+        loadWeeklyProgress();
+        alert('Your selfie has been securely saved to your local browser progress tracker!');
+      } catch (err) {
+        console.warn('Storage error:', err);
+      }
+    } else {
+      alert('Progress tracker enabled! Capture or upload a selfie above, then click this button to store your baseline scan.');
+    }
+  });
+}
+
+if (btnTrackerDelete) {
+  btnTrackerDelete.addEventListener('click', () => {
+    if (confirm('Delete all stored selfies from this device? This action is permanent and clears your local photos.')) {
+      localStorage.removeItem('mira_weekly_progress');
+      localStorage.removeItem('mira_tracker_consent');
+      loadWeeklyProgress();
+      alert('All local progress tracker photos have been deleted securely.');
+    }
+  });
+}
+
+// =============================================================================
 // FORM SUBMISSION & AUTOMATIC SCROLL TO GENERATED SKINCARE ROUTINE
 // =============================================================================
 
@@ -768,12 +961,18 @@ if (analyseBtn) {
     analyseBtn.disabled = true;
     analyseBtn.innerHTML = '<span>✦ Synthesizing Your Custom Skincare Protocol...</span>';
 
+    const confirmedConcerns = getConfirmedConcerns();
     const payload = {
       imageData,
       ageRange: ageRangeInput.value,
-      goals: goalsInput.value,
+      goals: goalsInput.value || confirmedConcerns.join(', '),
+      confirmedConcerns,
       sensitivities: sensitivitiesInput.value,
-      budget: budgetInput.value
+      budget: budgetInput.value,
+      pregnantOrBreastfeeding: safetyPregnantInput ? safetyPregnantInput.value : 'no',
+      medication: safetyMedicationInput ? safetyMedicationInput.value : '',
+      verySensitive: safetySensitiveInput ? safetySensitiveInput.value : 'no',
+      allergies: safetyReactionsInput ? safetyReactionsInput.value : ''
     };
 
     try {
@@ -798,6 +997,14 @@ if (analyseBtn) {
       
       const analysis = data.analysis || defaultAnalysis;
 
+      // Update safety conflict check & patch test notices
+      if (data.ingredientConflictCheck && conflictText) {
+        conflictText.textContent = data.ingredientConflictCheck;
+      }
+      if (data.patchTestReminder && patchTestText) {
+        patchTestText.textContent = data.patchTestReminder;
+      }
+
       // Render the updated protocol
       renderSequentialProtocol();
       switchMode(activeMode);
@@ -816,10 +1023,12 @@ if (analyseBtn) {
     } catch (error) {
       console.warn('Instant client synthesis active:', error);
       try {
-        const catRes = await fetch(`/api/catalog?budget=${encodeURIComponent(payload.budget)}`);
+        const catRes = await fetch(`/api/catalog?budget=${encodeURIComponent(payload.budget)}&concerns=${encodeURIComponent(confirmedConcerns.join(','))}`);
         if (catRes.ok) {
           const catData = await catRes.json();
           if (catData.catalog) catalogData = catData.catalog;
+          if (catData.ingredientConflictCheck && conflictText) conflictText.textContent = catData.ingredientConflictCheck;
+          if (catData.patchTestReminder && patchTestText) patchTestText.textContent = catData.patchTestReminder;
         }
       } catch {}
       renderSequentialProtocol();
@@ -1035,7 +1244,7 @@ function generateBotReply(userPrompt) {
   if (q.includes('budget') || q.includes('price') || q.includes('cost') || q.includes('cheap') || q.includes('expensive')) {
     appendBotMessage(`
       <p><strong>💰 Budget Flexibility:</strong></p>
-      <p>You can enter any budget preference you want in the context intake (e.g., ₹500, ₹1,200, ₹3,000, or Flexible). Minimalist and Cetaphil provide medical-grade formulations starting from ₹399 on Blinkit and Zepto.</p>
+      <p>You can enter any budget preference you want in the context intake (e.g., ₹500, ₹1,200, ₹3,000, or Flexible). Minimalist and Cetaphil provide personalized formulations starting from ₹399 on Blinkit and Zepto.</p>
     `);
     return;
   }
@@ -1079,6 +1288,8 @@ if (chatSuggestions) {
 
 async function initApp() {
   updateReminderUI();
+  loadWeeklyProgress();
+  syncGoalsFromChips();
 
   try {
     const res = await fetch('/api/catalog');

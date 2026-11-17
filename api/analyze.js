@@ -1,33 +1,15 @@
-import { catalog, tiers, getCatalogForBudget } from "./catalog.js";
+import { catalog, tiers, getCatalogForBudget, buildPersonalizedRoutine, inventory } from "./catalog.js";
 
 const nimModel = process.env.NVIDIA_NIM_MODEL || "nvidia/nemotron-3.5-super-vl-120b-a12b";
 const safetyPrompt = `You are Mira, an intelligent, cautious clinical skincare-education AI. You are not a dermatologist and do not diagnose medical conditions. A photo is insufficient to diagnose hormonal disorders, infections, or severe skin conditions. Use user-declared age range, goals, budget, and sensitivities.
 
-Provide a dedicated, clinical DAYTIME (AM) routine and NIGHTTIME (PM) routine with specific step numbers, timing guidance, and product advice.
+Provide a dedicated, personalized DAYTIME (AM) routine and NIGHTTIME (PM) routine with specific step numbers, timing guidance, and product advice.
 Return STRICT JSON ONLY with this exact structure:
 {
   "summary": "Concise summary of skin analysis and routine philosophy (classy, professional, supportive)",
   "visibleObservations": ["Non-diagnostic observation 1", "Non-diagnostic observation 2"],
   "careLevel": "routine" or "professional",
-  "caution": "Clinical caution notice regarding active patch-testing, SPF adherence, or when to see an MD",
-  "dayRoutine": [
-    {
-      "stepNumber": "01",
-      "step": "Gentle Morning Cleanse",
-      "guidance": "Wash with lukewarm water and a non-stripping cleanser to clear overnight sebum.",
-      "category": "Cleanser",
-      "recommendedProduct": "Product Name"
-    }
-  ],
-  "nightRoutine": [
-    {
-      "stepNumber": "01",
-      "step": "Purifying Evening Cleanse",
-      "guidance": "Thoroughly removes pollution, sunscreen, and daily buildup to allow overnight cellular renewal.",
-      "category": "Cleanser",
-      "recommendedProduct": "Product Name"
-    }
-  ]
+  "caution": "Clinical caution notice regarding active patch-testing, SPF adherence, or when to see an MD"
 }`;
 
 function demoResult(userContext = {}) {
@@ -35,59 +17,92 @@ function demoResult(userContext = {}) {
   const tier = getCatalogForBudget(budget);
   const customBudget = budget ? `within your budget preference of ${budget} (${tier.name})` : `tailored to your ${tier.name}`;
 
-  const dayRoutine = tier.daytime.map(p => ({
+  // Extract concerns from confirmedConcerns array or goals string
+  let concerns = [];
+  if (Array.isArray(userContext.confirmedConcerns) && userContext.confirmedConcerns.length) {
+    concerns = userContext.confirmedConcerns;
+  } else if (userContext.goals) {
+    concerns = userContext.goals.split(/[,+]/).map(s => s.trim()).filter(Boolean);
+  }
+  if (!concerns.length) {
+    concerns = ["oiliness", "pigmentation", "acne"];
+  }
+
+  const isPregnant = userContext.pregnantOrBreastfeeding === true || userContext.pregnantOrBreastfeeding === "yes";
+  const isSensitive = userContext.verySensitive === true || userContext.verySensitive === "yes" || userContext.verySensitive === "very";
+
+  const personalized = buildPersonalizedRoutine({
+    concerns,
+    budget,
+    pregnantOrBreastfeeding: isPregnant,
+    medication: userContext.medication || "",
+    verySensitive: isSensitive,
+    allergies: userContext.allergies || userContext.sensitivities || ""
+  });
+
+  const dayRoutine = personalized.daytime.map(p => ({
     stepNumber: p.stepNumber,
-    step: p.stepTitle,
-    guidance: p.match,
+    step: p.stepTitle || p.category,
+    guidance: p.match || p.whyThisProduct,
     category: p.category,
     recommendedProduct: p.name,
     price: p.price,
-    imageUrl: p.imageUrl
+    imageUrl: p.imageUrl,
+    whyThisProduct: p.whyThisProduct
   }));
 
-  const nightRoutine = tier.nighttime.map(p => ({
+  const nightRoutine = personalized.nighttime.map(p => ({
     stepNumber: p.stepNumber,
-    step: p.stepTitle,
-    guidance: p.match,
+    step: p.stepTitle || p.category,
+    guidance: p.match || p.whyThisProduct,
     category: p.category,
     recommendedProduct: p.name,
     price: p.price,
-    imageUrl: p.imageUrl
+    imageUrl: p.imageUrl,
+    whyThisProduct: p.whyThisProduct
   }));
 
   return {
-    summary: `Your personalized clinical protocol, ${customBudget}. Engineered with distinct daytime barrier shielding and nighttime cellular restoration routines.`,
+    summary: `Your personalized protocol, ${customBudget}. Engineered with distinct daytime barrier shielding and nighttime cellular restoration routines.`,
     visibleObservations: [
       "Skin barrier shows mild daytime trans-epidermal moisture need",
-      "Balanced pore clarity suitable for targeted active ingredients"
+      "Pore clarity and texture suitable for targeted non-colliding actives"
     ],
     careLevel: "routine",
-    caution: "Always patch test new actives on your inner forearm. If stinging, persistent redness, or swelling occurs, discontinue use immediately. Consult a licensed dermatologist for chronic conditions.",
+    caution: personalized.patchTestReminder,
     dayRoutine,
     nightRoutine,
-    selectedTier: tier
+    selectedTier: personalized.selectedTier,
+    ingredientConflictCheck: personalized.ingredientConflictCheck,
+    patchTestReminder: personalized.patchTestReminder,
+    dermatologistNotice: personalized.dermatologistNotice,
+    catalog: {
+      daytime: personalized.daytime,
+      nighttime: personalized.nighttime
+    }
   };
 }
 
 function extractJson(text, userContext = {}) {
-  if (!text) return demoResult(userContext);
+  const fallback = demoResult(userContext);
+  if (!text) return fallback;
   const firstBrace = text.indexOf("{");
   const lastBrace = text.lastIndexOf("}");
   if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
-    return demoResult(userContext);
+    return fallback;
   }
   const clean = text.slice(firstBrace, lastBrace + 1);
   try {
     const parsed = JSON.parse(clean);
-    const tier = getCatalogForBudget(userContext.budget);
     return {
-      ...parsed,
-      dayRoutine: parsed.dayRoutine && parsed.dayRoutine.length ? parsed.dayRoutine : demoResult(userContext).dayRoutine,
-      nightRoutine: parsed.nightRoutine && parsed.nightRoutine.length ? parsed.nightRoutine : demoResult(userContext).nightRoutine,
-      selectedTier: tier
+      ...fallback,
+      summary: parsed.summary || fallback.summary,
+      visibleObservations: parsed.visibleObservations || fallback.visibleObservations,
+      careLevel: parsed.careLevel || fallback.careLevel,
+      caution: parsed.caution || fallback.caution
     };
   } catch {
-    return demoResult(userContext);
+    return fallback;
   }
 }
 
@@ -100,7 +115,10 @@ async function callNim(payload = {}) {
   const textPrompt = `Skin Analysis Context:
 - User Declared Age Range: ${payload.ageRange || "Not specified"}
 - User Goals / Primary Concerns: ${payload.goals || "Barrier repair, general hydration"}
-- User Sensitivities / Allergies: ${payload.sensitivities || "None declared"}
+- Confirmed Concerns: ${(payload.confirmedConcerns || []).join(", ")}
+- User Sensitivities / Allergies: ${payload.sensitivities || payload.allergies || "None declared"}
+- Pregnant / Breastfeeding: ${payload.pregnantOrBreastfeeding || "No"}
+- Skin Medication: ${payload.medication || "None"}
 - User Budget Preference: ${payload.budget || "Flexible"}
 
 Analyze these inputs under the stated clinical boundary. Recommend safe, evidence-based over-the-counter routines for daytime and nighttime in strict JSON.`;
@@ -159,31 +177,42 @@ export default async function handler(req, res) {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
 
-  const selectedTier = getCatalogForBudget(body.budget);
+  const fallback = demoResult(body);
+  const selectedTier = fallback.selectedTier;
 
   // Fast synthesis engine: Race external LLM with a 1.5s timeout so generation takes < 2 seconds
   try {
     let analysis;
     if (process.env.NVIDIA_API_KEY) {
-      const nimTimeout = new Promise((resolve) => setTimeout(() => resolve(demoResult(body)), 1500));
+      const nimTimeout = new Promise((resolve) => setTimeout(() => resolve(fallback), 1500));
       analysis = await Promise.race([callNim(body), nimTimeout]);
     } else {
-      analysis = demoResult(body);
+      analysis = fallback;
     }
 
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({
-      analysis: analysis || demoResult(body),
-      catalog: selectedTier,
-      products: [...selectedTier.daytime, ...selectedTier.nighttime],
+      analysis: analysis || fallback,
+      catalog: fallback.catalog,
+      daytime: fallback.catalog.daytime,
+      nighttime: fallback.catalog.nighttime,
+      ingredientConflictCheck: fallback.ingredientConflictCheck,
+      patchTestReminder: fallback.patchTestReminder,
+      dermatologistNotice: fallback.dermatologistNotice,
+      products: [...fallback.catalog.daytime, ...fallback.catalog.nighttime],
       selectedTier
     }));
   } catch (error) {
     res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({
-      analysis: demoResult(body),
-      catalog: selectedTier,
-      products: [...selectedTier.daytime, ...selectedTier.nighttime],
+      analysis: fallback,
+      catalog: fallback.catalog,
+      daytime: fallback.catalog.daytime,
+      nighttime: fallback.catalog.nighttime,
+      ingredientConflictCheck: fallback.ingredientConflictCheck,
+      patchTestReminder: fallback.patchTestReminder,
+      dermatologistNotice: fallback.dermatologistNotice,
+      products: [...fallback.catalog.daytime, ...fallback.catalog.nighttime],
       selectedTier
     }));
   }
