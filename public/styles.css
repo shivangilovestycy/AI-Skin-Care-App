@@ -604,39 +604,22 @@ button, input, select {
 .product-rotation-wrapper {
   position: relative;
   z-index: 5;
-  width: 180px;
-  height: 260px;
+  width: 220px;
+  height: 280px;
   margin-top: -10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 900px;
 }
 
-/* Continuous 3D Turntable Animation (Crystal-Clear Original Image, NO blur!) */
+/* Continuous Floating Levitation (Crystal-Clear Original Image, NO blur!) */
 .rotating-bottle-3d {
-  max-width: 150px;
-  max-height: 240px;
+  max-width: 170px;
+  max-height: 250px;
   object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
-  animation: rotate-turntable-crisp 7s ease-in-out infinite;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  will-change: transform;
-}
-
-@keyframes rotate-turntable-crisp {
-  0% {
-    transform: translateY(0px) rotateY(-18deg) scale(1);
-  }
-  50% {
-    transform: translateY(-8px) rotateY(18deg) scale(1.02);
-  }
-  100% {
-    transform: translateY(0px) rotateY(-18deg) scale(1);
-  }
+  filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.75));
+  animation: float-levitate 4.5s ease-in-out infinite;
+  display: block;
 }
 
 /* Glowing Elliptical Pedestal Platform at the bottom of light cone */
@@ -1026,45 +1009,45 @@ button, input, select {
   white-space: nowrap;
 }
 
-/* 3D Pedestal Stage inside Card (Crystal Sharp Vector Spotlight, NO blur!) */
+/* Studio Pedestal Stage inside Card (Crystal Sharp, Illuminated, NO blur!) */
 .step-product-stage {
   position: relative;
-  height: 220px;
+  height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 900px;
   overflow: hidden;
-  border-radius: 18px;
-  background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.05) 0%, #0c0f16 75%);
-  margin-bottom: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 45%, #182030 0%, #0e121a 55%, #080a0f 100%);
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
 }
 
 .stage-cone-beam {
   position: absolute;
-  bottom: 20px;
+  bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  width: 170px;
-  height: 170px;
-  background: linear-gradient(to top, rgba(200, 230, 255, 0.22) 0%, rgba(160, 205, 255, 0.06) 50%, transparent 100%);
-  clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%);
+  width: 210px;
+  height: 210px;
+  background: linear-gradient(to top, rgba(200, 230, 255, 0.24) 0%, rgba(150, 200, 255, 0.06) 55%, transparent 100%);
+  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
   pointer-events: none;
   z-index: 2;
 }
 
 .stage-pedestal-platform {
   position: absolute;
-  bottom: 14px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 125px;
-  height: 26px;
+  width: 155px;
+  height: 32px;
   border-radius: 50%;
   background: radial-gradient(ellipse at center, #ffffff 0%, #ccd8e8 40%, #566882 75%, transparent 100%);
-  box-shadow: 0 0 24px rgba(200, 230, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 28px rgba(200, 230, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   z-index: 3;
 }
 
@@ -1076,19 +1059,28 @@ button, input, select {
   justify-content: center;
   width: 100%;
   height: 100%;
+  padding: 12px;
 }
 
+/* Crystal-Clear Authentic Packshot: Large, Razor-Sharp, Zero Blur! */
 .crisp-product-img {
-  max-height: 160px;
-  max-width: 120px;
+  height: 195px;
+  max-height: 200px;
+  width: auto;
+  max-width: 85%;
   object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
-  animation: rotate-turntable-crisp 7s ease-in-out infinite;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  will-change: transform;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
+  animation: float-levitate 4.5s ease-in-out infinite;
+  display: block;
+}
+
+@keyframes float-levitate {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
 }
 
 /* Card Content: Title, Price, Guidance, Tips */

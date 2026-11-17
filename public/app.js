@@ -142,7 +142,7 @@ const defaultCatalog = {
       step: "03",
       timing: "Morning (AM)",
       usageTip: "Smooth a nickel-sized amount evenly over face and neck to lock in active serum hydration.",
-      imageUrl: "/assets/cerave-cream.png",
+      imageUrl: "/assets/cerave-lotion.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=cerave+moisturising+cream",
         zepto: "https://www.zeptonow.com/search?query=cerave+moisturising+cream",
