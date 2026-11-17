@@ -34,16 +34,15 @@ const heroToggleNight = document.querySelector('#hero-toggle-night');
 const btnHeroShop = document.querySelector('#btn-hero-shop');
 const btnScanAgain = document.querySelector('#btn-scan-again');
 
-// DOM Elements: Routine & Catalog
+// DOM Elements: Combined Sequential Routine Section
+const routineSection = document.querySelector('#routine-section');
 const tabDayBtn = document.querySelector('#tab-day-btn');
 const tabNightBtn = document.querySelector('#tab-night-btn');
 const routineTabsContainer = document.querySelector('#routine-tabs-container');
 const dayPanel = document.querySelector('#day-routine-panel');
 const nightPanel = document.querySelector('#night-routine-panel');
-const dayRoutineGrid = document.querySelector('#day-routine-grid');
-const nightRoutineGrid = document.querySelector('#night-routine-grid');
-const catalogHeading = document.querySelector('#catalog-heading');
-const productGrid = document.querySelector('#product-grid');
+const daySequenceGrid = document.querySelector('#day-sequence-grid');
+const nightSequenceGrid = document.querySelector('#night-sequence-grid');
 
 // DOM Elements: Store Modal
 const storeModal = document.querySelector('#store-modal');
@@ -78,7 +77,6 @@ let imageData = '';
 let activeMediaStream = null;
 let activeMode = 'day'; // 'day' | 'night'
 let catalogData = { daytime: [], nighttime: [] };
-let currentDisplayedProducts = [];
 let currentHeroProduct = null;
 let reminderState = {
   am: localStorage.getItem('mira_reminder_am') === 'true',
@@ -91,6 +89,9 @@ const defaultCatalog = {
   daytime: [
     {
       id: "day-01",
+      stepNumber: "01",
+      stepTitle: "Gentle Morning Cleanse",
+      phase: "MORNING (AM) · STEP 01",
       category: "Gentle Morning Cleanse",
       name: "CeraVe Hydrating Facial Cleanser",
       match: "Non-stripping lotion cleanser with 3 essential ceramides & hyaluronic acid for morning barrier protection.",
@@ -98,6 +99,7 @@ const defaultCatalog = {
       price: "₹850",
       step: "01",
       timing: "Morning (AM)",
+      usageTip: "1–2 pumps on damp face. Gently massage 30 seconds in circular motions, rinse with lukewarm water.",
       imageUrl: "/assets/cerave-cleanser.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=cerave+hydrating+cleanser",
@@ -108,6 +110,9 @@ const defaultCatalog = {
     },
     {
       id: "day-02",
+      stepNumber: "02",
+      stepTitle: "Antioxidant & Sebum Balance",
+      phase: "MORNING (AM) · STEP 02",
       category: "Antioxidant & Sebum Balance",
       name: "The Ordinary Niacinamide 10% + Zinc 1%",
       match: "Controls excess daytime sebum, refines skin texture, and fortifies the lipid barrier under sunscreen.",
@@ -115,6 +120,7 @@ const defaultCatalog = {
       price: "₹600",
       step: "02",
       timing: "Morning (AM)",
+      usageTip: "Dispense 2–3 drops onto fingertips. Press gently into face and neck before moisturiser.",
       imageUrl: "/assets/the-ordinary-niacinamide.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=the+ordinary+niacinamide",
@@ -125,6 +131,9 @@ const defaultCatalog = {
     },
     {
       id: "day-03",
+      stepNumber: "03",
+      stepTitle: "Lightweight Barrier Moisture",
+      phase: "MORNING (AM) · STEP 03",
       category: "Lightweight Barrier Moisture",
       name: "CeraVe Daily Moisturising Lotion",
       match: "Lightweight, oil-free hydration with MVE delivery technology for sustained 24-hour hydration.",
@@ -132,6 +141,7 @@ const defaultCatalog = {
       price: "₹1,200",
       step: "03",
       timing: "Morning (AM)",
+      usageTip: "Smooth a nickel-sized amount evenly over face and neck to lock in active serum hydration.",
       imageUrl: "/assets/cerave-cream.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=cerave+moisturising+cream",
@@ -142,6 +152,9 @@ const defaultCatalog = {
     },
     {
       id: "day-04",
+      stepNumber: "04",
+      stepTitle: "Broad-Spectrum UV Shield",
+      phase: "MORNING (AM) · STEP 04",
       category: "Broad-Spectrum UV Shield",
       name: "Minimalist Multi-Vitamin SPF 50 PA++++",
       match: "Essential broad-spectrum protection infused with vitamins A, B, C & E. Leaves zero white cast and prevents photodamage.",
@@ -149,6 +162,7 @@ const defaultCatalog = {
       price: "₹399",
       step: "04",
       timing: "Morning (AM)",
+      usageTip: "Apply 2 finger-lengths across face, neck & ears 15 minutes before sun exposure. Reapply every 3 hours.",
       imageUrl: "/assets/minimalist-sunscreen.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=minimalist+sunscreen+spf+50",
@@ -161,6 +175,9 @@ const defaultCatalog = {
   nighttime: [
     {
       id: "night-01",
+      stepNumber: "01",
+      stepTitle: "Purifying Evening Cleanse",
+      phase: "NIGHT (PM) · STEP 01",
       category: "Purifying Evening Cleanse",
       name: "Cetaphil Gentle Skin Cleanser",
       match: "Clinically proven formula with niacinamide & panthenol to melt away daily grime, sunscreen, and particulate pollution.",
@@ -168,6 +185,7 @@ const defaultCatalog = {
       price: "₹399",
       step: "01",
       timing: "Night (PM)",
+      usageTip: "Massage onto dry or damp skin for 45 seconds to dissolve environmental impurities. Rinse clean.",
       imageUrl: "/assets/cetaphil-cleanser.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=cetaphil+gentle+skin+cleanser",
@@ -178,6 +196,9 @@ const defaultCatalog = {
     },
     {
       id: "night-02",
+      stepNumber: "02",
+      stepTitle: "Cellular Renewal & Anti-Aging",
+      phase: "NIGHT (PM) · STEP 02",
       category: "Cellular Renewal & Anti-Aging",
       name: "The Ordinary Retinol 0.2% in Squalane",
       match: "Pure active retinol in stabilizing squalane. Accelerates overnight cell turnover, clears microcomedones, and smoothes fine lines.",
@@ -185,6 +206,7 @@ const defaultCatalog = {
       price: "₹700",
       step: "02",
       timing: "Night (PM)",
+      usageTip: "Apply 2–3 drops at night on dry skin 2–3 times a week. Avoid eye area and always use daytime SPF.",
       imageUrl: "/assets/the-ordinary-retinol.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=the+ordinary+retinol",
@@ -195,6 +217,9 @@ const defaultCatalog = {
     },
     {
       id: "night-03",
+      stepNumber: "03",
+      stepTitle: "Deep Overnight Barrier Recovery",
+      phase: "NIGHT (PM) · STEP 03",
       category: "Deep Overnight Barrier Recovery",
       name: "CeraVe Moisturising Cream (16 oz)",
       match: "Rich ceramide complex with hyaluronic acid to seal in nighttime actives and rebuild the stratum corneum while you sleep.",
@@ -202,6 +227,7 @@ const defaultCatalog = {
       price: "₹1,450",
       step: "03",
       timing: "Night (PM)",
+      usageTip: "Generously smooth over face and neck as the final sealing step to prevent transepidermal water loss overnight.",
       imageUrl: "/assets/cerave-cream.png",
       stores: {
         blinkit: "https://blinkit.com/s/?q=cerave+moisturising+cream",
@@ -213,7 +239,7 @@ const defaultCatalog = {
   ]
 };
 
-// Default Protocol Sequences
+// Default Protocol Guidance
 const defaultAnalysis = {
   summary: "Personalized clinical protocol with distinct daytime barrier shielding and nighttime cellular renewal.",
   dayRoutine: [
@@ -316,7 +342,7 @@ function triggerNotification(title, message) {
         icon: '/assets/cerave-cleanser.png'
       });
     } catch {
-      // Fallback if Notification constructor fails
+      // Fallback
     }
   }
 
@@ -325,7 +351,7 @@ function triggerNotification(title, message) {
 }
 
 // =============================================================================
-// DEVICE CAMERA & SELFIE INPUT
+// DEVICE CAMERA & SELFIE INPUT (AUTOMATIC UPLOAD & SCROLL)
 // =============================================================================
 
 function stopCameraStream() {
@@ -340,7 +366,7 @@ async function startCamera() {
   if (cameraStatus) cameraStatus.textContent = 'Activating device optical sensor…';
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    if (cameraStatus) cameraStatus.textContent = 'Camera API not supported in this browser environment. Please upload an image file.';
+    if (cameraStatus) cameraStatus.textContent = 'Camera API not supported in this browser. Please upload a photo from device.';
     return;
   }
 
@@ -358,18 +384,16 @@ async function startCamera() {
     cameraStreamEl.style.display = 'block';
     if (previewPlaceholder) previewPlaceholder.style.display = 'none';
 
-    // Remove any captured image
     const existingImg = preview.querySelector('img');
     if (existingImg) existingImg.remove();
 
     preview.classList.add('active');
 
-    // Button states
     openCameraBtn.style.display = 'none';
     capturePhotoBtn.style.display = 'flex';
     retakePhotoBtn.style.display = 'none';
 
-    if (cameraStatus) cameraStatus.textContent = 'Scanner online. Center your face in the circular reticle and capture.';
+    if (cameraStatus) cameraStatus.textContent = 'Optical scanner online. Center your face and tap "Capture Selfie".';
   } catch (err) {
     console.error('Camera access error:', err);
     if (cameraStatus) cameraStatus.textContent = 'Camera permission denied or camera unavailable. You can upload a photo instead.';
@@ -388,18 +412,15 @@ function capturePhoto() {
   cameraCanvas.height = height;
 
   const ctx = cameraCanvas.getContext('2d');
-  // Mirror frame horizontally for natural selfie view
   ctx.translate(width, 0);
   ctx.scale(-1, 1);
   ctx.drawImage(cameraStreamEl, 0, 0, width, height);
 
   imageData = cameraCanvas.toDataURL('image/jpeg', 0.92);
 
-  // Stop camera tracks
   stopCameraStream();
   cameraStreamEl.style.display = 'none';
 
-  // Display captured image
   let img = preview.querySelector('img');
   if (!img) {
     img = document.createElement('img');
@@ -410,12 +431,11 @@ function capturePhoto() {
   img.style.display = 'block';
   preview.classList.add('active');
 
-  // Update UI buttons
   capturePhotoBtn.style.display = 'none';
   retakePhotoBtn.style.display = 'flex';
   openCameraBtn.style.display = 'none';
 
-  if (cameraStatus) cameraStatus.textContent = 'Biometric input captured. Set your preferences below and build your protocol.';
+  if (cameraStatus) cameraStatus.textContent = 'Biometric scan uploaded successfully! Click "Generate Skincare Routine" below.';
   
   // Smooth scroll to intake section
   const intakeSection = document.querySelector('#intake-section');
@@ -457,7 +477,10 @@ if (selfie) {
       openCameraBtn.style.display = 'none';
       capturePhotoBtn.style.display = 'none';
       retakePhotoBtn.style.display = 'flex';
-      if (cameraStatus) cameraStatus.textContent = 'Image loaded from device. Configure context preferences below.';
+      if (cameraStatus) cameraStatus.textContent = 'Photo uploaded successfully! Click "Generate Skincare Routine" below.';
+      
+      const intakeSection = document.querySelector('#intake-section');
+      if (intakeSection) intakeSection.scrollIntoView({ behavior: 'smooth' });
     };
     reader.readAsDataURL(file);
   });
@@ -502,51 +525,134 @@ document.addEventListener('keydown', (e) => {
 });
 
 // =============================================================================
-// 3D ROTATING PRODUCT CATALOG & MINI STAGE RENDERING
+// COMBINED SEQUENTIAL PROTOCOL RENDERING (SEPARATE AM & PM VIEWS)
 // =============================================================================
 
-function renderProductsGrid(products) {
-  currentDisplayedProducts = products;
-  if (!productGrid) return;
-  
-  // Every product rendered inside product-3d-stage with spotlight cone & pedestal disc, continuously rotating in 3D
-  productGrid.innerHTML = products.map((product, idx) => `
-    <article class="product-card">
-      <div class="card-top-bar">
-        <span class="p-category">${product.category}</span>
-        <span class="p-match">${product.matchRate || '95% MATCH'}</span>
-      </div>
+function renderSequentialProtocol() {
+  const dayProducts = (catalogData.daytime && catalogData.daytime.length) ? catalogData.daytime : defaultCatalog.daytime;
+  const nightProducts = (catalogData.nighttime && catalogData.nighttime.length) ? catalogData.nighttime : defaultCatalog.nighttime;
 
-      <!-- 3D Miniature Spotlight Stage with Turntable Rotating Packshot -->
-      <div class="product-3d-stage">
-        <div class="stage-mini-cone"></div>
-        <div class="stage-mini-pedestal"></div>
-        <img class="rotating-bottle-3d" src="${product.imageUrl}" alt="${product.name}" loading="lazy">
-      </div>
+  // Render Daytime Sequential Cards (4 Steps)
+  if (daySequenceGrid) {
+    daySequenceGrid.innerHTML = dayProducts.map((p, idx) => `
+      <article class="protocol-step-card">
+        <!-- Card Step Header -->
+        <div class="card-step-header">
+          <div class="step-num-pill">
+            <span class="num">${p.stepNumber || String(idx + 1).padStart(2, '0')}</span>
+            <span class="step-label">STEP</span>
+          </div>
+          <div class="step-meta-titles">
+            <span class="step-phase">${p.phase || `MORNING (AM) · STEP ${p.stepNumber}`}</span>
+            <h3 class="step-title">${p.stepTitle || p.category}</h3>
+          </div>
+          <div class="step-match-pill">${p.matchRate || '97% MATCH'}</div>
+        </div>
 
-      <h3>${product.name}</h3>
-      <p>${product.match}</p>
-      <div class="product-card-bottom">
-        <span class="p-price">${product.price}</span>
-        <button type="button" class="btn-open-stores" data-idx="${idx}">
-          <span>Shop Options</span> <span>→</span>
-        </button>
-      </div>
-    </article>
-  `).join('');
+        <!-- 3D Spotlight Stage with Real Crystal-Clear Packshot (NO blur!) -->
+        <div class="step-product-stage">
+          <div class="stage-cone-beam"></div>
+          <div class="stage-pedestal-platform"></div>
+          <div class="stage-packshot-wrapper">
+            <img class="crisp-product-img" src="${p.imageUrl}" alt="${p.name}" loading="lazy">
+          </div>
+        </div>
 
-  // Wire up store modal triggers
-  productGrid.querySelectorAll('.btn-open-stores').forEach(btn => {
+        <!-- Product Identity & Clinical Details -->
+        <div class="step-content">
+          <div class="product-identity">
+            <h4 class="product-name">${p.name}</h4>
+            <span class="product-price-tag">${p.price}</span>
+          </div>
+          <p class="product-clinical-guidance">${p.match}</p>
+
+          <div class="step-usage-tips">
+            <div class="tip-item">
+              <span class="tip-icon">💧</span>
+              <span><strong>Application:</strong> ${p.usageTip || 'Apply after cleansing, pat gently into skin.'}</span>
+            </div>
+          </div>
+
+          <!-- Quick Commerce Options Button -->
+          <div class="step-actions">
+            <button type="button" class="btn-step-shop" data-id="${p.id}" data-mode="day" data-idx="${idx}">
+              <span>Shop Options (Blinkit · Zepto · Nykaa)</span>
+              <span class="shop-arrow">→</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // Render Nighttime Sequential Cards (3 Steps)
+  if (nightSequenceGrid) {
+    nightSequenceGrid.innerHTML = nightProducts.map((p, idx) => `
+      <article class="protocol-step-card">
+        <!-- Card Step Header -->
+        <div class="card-step-header">
+          <div class="step-num-pill">
+            <span class="num">${p.stepNumber || String(idx + 1).padStart(2, '0')}</span>
+            <span class="step-label">STEP</span>
+          </div>
+          <div class="step-meta-titles">
+            <span class="step-phase">${p.phase || `NIGHT (PM) · STEP ${p.stepNumber}`}</span>
+            <h3 class="step-title">${p.stepTitle || p.category}</h3>
+          </div>
+          <div class="step-match-pill">${p.matchRate || '96% MATCH'}</div>
+        </div>
+
+        <!-- 3D Spotlight Stage with Real Crystal-Clear Packshot (NO blur!) -->
+        <div class="step-product-stage">
+          <div class="stage-cone-beam"></div>
+          <div class="stage-pedestal-platform"></div>
+          <div class="stage-packshot-wrapper">
+            <img class="crisp-product-img" src="${p.imageUrl}" alt="${p.name}" loading="lazy">
+          </div>
+        </div>
+
+        <!-- Product Identity & Clinical Details -->
+        <div class="step-content">
+          <div class="product-identity">
+            <h4 class="product-name">${p.name}</h4>
+            <span class="product-price-tag">${p.price}</span>
+          </div>
+          <p class="product-clinical-guidance">${p.match}</p>
+
+          <div class="step-usage-tips">
+            <div class="tip-item">
+              <span class="tip-icon">🌙</span>
+              <span><strong>Application:</strong> ${p.usageTip || 'Apply at night on clean skin before bed.'}</span>
+            </div>
+          </div>
+
+          <!-- Quick Commerce Options Button -->
+          <div class="step-actions">
+            <button type="button" class="btn-step-shop" data-id="${p.id}" data-mode="night" data-idx="${idx}">
+              <span>Shop Options (Blinkit · Zepto · Nykaa)</span>
+              <span class="shop-arrow">→</span>
+            </button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // Wire up all "Shop Options" buttons
+  document.querySelectorAll('.btn-step-shop').forEach(btn => {
     btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-mode');
       const idx = parseInt(btn.getAttribute('data-idx'), 10);
-      openStoreModal(currentDisplayedProducts[idx]);
+      const list = mode === 'day' ? dayProducts : nightProducts;
+      openStoreModal(list[idx]);
     });
   });
 }
 
-// Update the Top 3D Hero Showcase Card
+// Update Top Hero Showcase Card
 function updateHeroShowcase(product) {
-  currentHeroProduct = product || currentDisplayedProducts[0] || defaultCatalog.daytime[0];
+  const dayProducts = (catalogData.daytime && catalogData.daytime.length) ? catalogData.daytime : defaultCatalog.daytime;
+  currentHeroProduct = product || dayProducts[0];
 
   if (stageProductImg) stageProductImg.src = currentHeroProduct.imageUrl;
   if (stageCardCategory) stageCardCategory.textContent = currentHeroProduct.category || "BARRIER PROTECTION";
@@ -571,59 +677,6 @@ if (btnScanAgain) {
 }
 
 // =============================================================================
-// ROUTINE SEQUENCES RENDERING (AM & PM SEPARATION)
-// =============================================================================
-
-function renderRoutineSequences(analysis) {
-  const dayItems = analysis.dayRoutine || defaultAnalysis.dayRoutine;
-  const nightItems = analysis.nightRoutine || defaultAnalysis.nightRoutine;
-
-  if (dayRoutineGrid) {
-    dayRoutineGrid.innerHTML = dayItems.map(item => `
-      <article class="routine-step-card">
-        <div class="routine-card-meta">
-          <span class="step-tag">STEP ${item.stepNumber || '01'}</span>
-          <span class="time-tag">MORNING (AM)</span>
-        </div>
-        <h3>${item.step}</h3>
-        <p>${item.guidance}</p>
-        <div class="routine-product-pick">
-          <small>${item.recommendedProduct || item.category}</small>
-          <button type="button" class="btn-card-shop" data-product="${item.recommendedProduct}">Shop →</button>
-        </div>
-      </article>
-    `).join('');
-  }
-
-  if (nightRoutineGrid) {
-    nightRoutineGrid.innerHTML = nightItems.map(item => `
-      <article class="routine-step-card">
-        <div class="routine-card-meta">
-          <span class="step-tag">STEP ${item.stepNumber || '01'}</span>
-          <span class="time-tag">EVENING (PM)</span>
-        </div>
-        <h3>${item.step}</h3>
-        <p>${item.guidance}</p>
-        <div class="routine-product-pick">
-          <small>${item.recommendedProduct || item.category}</small>
-          <button type="button" class="btn-card-shop" data-product="${item.recommendedProduct}">Shop →</button>
-        </div>
-      </article>
-    `).join('');
-  }
-
-  // Wire up routine step shop buttons
-  document.querySelectorAll('.btn-card-shop').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const pName = (btn.getAttribute('data-product') || '').toLowerCase();
-      const allProducts = [...(catalogData.daytime || defaultCatalog.daytime), ...(catalogData.nighttime || defaultCatalog.nighttime)];
-      const matched = allProducts.find(p => p.name.toLowerCase().includes(pName) || pName.includes(p.name.toLowerCase())) || allProducts[0];
-      openStoreModal(matched);
-    });
-  });
-}
-
-// =============================================================================
 // SYNCHRONIZED AM / PM MODE SWITCHER
 // =============================================================================
 
@@ -631,37 +684,29 @@ function switchMode(mode) {
   activeMode = mode;
   const isDay = mode === 'day';
 
-  // Synchronize Routine sequence tabs
+  // Toggle routine tabs
   if (tabDayBtn && tabNightBtn) {
     tabDayBtn.classList.toggle('active', isDay);
     tabNightBtn.classList.toggle('active', !isDay);
   }
 
-  // Synchronize Hero showcase toggle buttons
+  // Toggle hero showcase buttons
   if (heroToggleDay && heroToggleNight) {
     heroToggleDay.classList.toggle('active', isDay);
     heroToggleNight.classList.toggle('active', !isDay);
   }
 
-  // Show corresponding routine panel
+  // Show corresponding routine panel (separate AM & PM viewing)
   if (dayPanel && nightPanel) {
     dayPanel.classList.toggle('active', isDay);
     nightPanel.classList.toggle('active', !isDay);
   }
 
-  // Update catalog heading
-  if (catalogHeading) {
-    catalogHeading.textContent = isDay
-      ? 'Daytime Recommended Formulations (AM)'
-      : 'Nighttime Recommended Formulations (PM)';
-  }
-
-  // Render the distinct products for Daytime vs Nighttime
+  // Update Hero Spotlight to the primary hero product for the selected mode
   const products = isDay
-    ? (catalogData.daytime && catalogData.daytime.length ? catalogData.daytime : defaultCatalog.daytime)
-    : (catalogData.nighttime && catalogData.nighttime.length ? catalogData.nighttime : defaultCatalog.nighttime);
+    ? ((catalogData.daytime && catalogData.daytime.length) ? catalogData.daytime : defaultCatalog.daytime)
+    : ((catalogData.nighttime && catalogData.nighttime.length) ? catalogData.nighttime : defaultCatalog.nighttime);
 
-  renderProductsGrid(products);
   updateHeroShowcase(products[0]);
 }
 
@@ -674,13 +719,14 @@ if (heroToggleDay) heroToggleDay.addEventListener('click', () => switchMode('day
 if (heroToggleNight) heroToggleNight.addEventListener('click', () => switchMode('night'));
 
 // =============================================================================
-// FORM SUBMISSION & CLINICAL SYNTHESIS
+// FORM SUBMISSION & AUTOMATIC SCROLL TO GENERATED SKINCARE ROUTINE
 // =============================================================================
 
 if (analyseBtn) {
   analyseBtn.addEventListener('click', async () => {
-    analysisStatus.textContent = 'Synthesizing dual-sequence protocol…';
+    if (analysisStatus) analysisStatus.textContent = 'Synthesizing your personalized skincare protocol…';
     analyseBtn.disabled = true;
+    analyseBtn.innerHTML = '<span>✦ Synthesizing Your Custom Skincare Protocol...</span>';
 
     const payload = {
       imageData,
@@ -704,24 +750,36 @@ if (analyseBtn) {
       }
       
       const analysis = data.analysis || defaultAnalysis;
-      renderRoutineSequences(analysis);
-      switchMode(activeMode); // Refresh current products and hero showcase
 
-      analysisStatus.textContent = analysis.careLevel === 'professional'
-        ? 'Professional care recommended — see clinical boundary'
-        : analysis.summary;
+      // Render the updated protocol
+      renderSequentialProtocol();
+      switchMode(activeMode);
 
-      // Smooth scroll to 3D showcase
-      if (showcaseView) {
-        showcaseView.scrollIntoView({ behavior: 'smooth' });
+      if (analysisStatus) {
+        analysisStatus.textContent = analysis.careLevel === 'professional'
+          ? 'Professional care recommended — see clinical boundary'
+          : analysis.summary;
+      }
+
+      // Automatically and smoothly scroll directly to the generated skincare routine section!
+      const targetSection = document.querySelector('#routine-section');
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     } catch (error) {
       console.warn('API analyze error, using default protocol:', error);
-      renderRoutineSequences(defaultAnalysis);
+      renderSequentialProtocol();
       switchMode(activeMode);
-      analysisStatus.textContent = 'Active protocol generated from skin profile preferences.';
+      if (analysisStatus) {
+        analysisStatus.textContent = 'Active protocol generated from skin profile preferences.';
+      }
+      const targetSection = document.querySelector('#routine-section');
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     } finally {
       analyseBtn.disabled = false;
+      analyseBtn.innerHTML = '<span class="btn-star-icon">✦</span> <span>Generate Skincare Routine →</span>';
     }
   });
 }
@@ -776,7 +834,6 @@ function escapeHtml(str) {
   }[tag] || tag));
 }
 
-// Update Reminder UI Badges and Chips
 function updateReminderUI() {
   if (statusChipAm) statusChipAm.textContent = reminderState.am ? 'Active ☀️' : 'Set';
   if (chipRemindAm) chipRemindAm.classList.toggle('active', reminderState.am);
@@ -800,7 +857,6 @@ function updateReminderUI() {
   localStorage.setItem('mira_reminder_pm', reminderState.pm);
 }
 
-// Request Notification Permission
 async function requestNotificationAccess() {
   if ('Notification' in window) {
     if (Notification.permission === 'default') {
@@ -813,7 +869,6 @@ async function requestNotificationAccess() {
   }
 }
 
-// Reminder toggle helpers
 async function toggleAmReminder() {
   await requestNotificationAccess();
   reminderState.am = !reminderState.am;
@@ -849,11 +904,9 @@ if (btnActivateReminders) {
   });
 }
 
-// Intelligent Skincare Chatbot Responses
 function generateBotReply(userPrompt) {
   const q = userPrompt.toLowerCase();
 
-  // Reminder command detection
   if (q.includes('remind') || q.includes('alarm') || q.includes('notification')) {
     if (q.includes('day') || q.includes('morning') || q.includes('8 am') || q.includes('am')) {
       toggleAmReminder();
@@ -863,7 +916,6 @@ function generateBotReply(userPrompt) {
       togglePmReminder();
       return;
     }
-    // Generic reminder request
     reminderState.am = true;
     reminderState.pm = true;
     updateReminderUI();
@@ -871,7 +923,6 @@ function generateBotReply(userPrompt) {
     return;
   }
 
-  // AM vs PM Routine differences
   if (q.includes('difference') || (q.includes('am') && q.includes('pm')) || q.includes('day and night') || q.includes('daytime vs nighttime')) {
     appendBotMessage(`
       <p><strong>☀️ Daytime vs 🌙 Nighttime Protocol:</strong></p>
@@ -886,18 +937,16 @@ function generateBotReply(userPrompt) {
     return;
   }
 
-  // Indian Quick Commerce (Blinkit / Zepto / Nykaa)
   if (q.includes('blinkit') || q.includes('zepto') || q.includes('nykaa') || q.includes('urgent') || q.includes('delivery') || q.includes('where to buy') || q.includes('india')) {
     appendBotMessage(`
       <p><strong>⚡ Delivery Options in India:</strong></p>
       <p>• <strong>Urgent (10–15 Minutes):</strong> Order through <strong>Blinkit</strong> or <strong>Zepto</strong>. Both stock CeraVe, Cetaphil, Minimalist SPF, and The Ordinary essentials with doorstep delivery in major Indian cities.</p>
       <p>• <strong>Standard (1–3 Days):</strong> Order through <strong>Nykaa</strong> or the official brand store for the guaranteed authentic batch with full packaging and verification.</p>
-      <p>Click "Shop Options" on any rotating product card to open direct links to each store!</p>
+      <p>Click "Shop Options" on any step card to open direct links to each store!</p>
     `);
     return;
   }
 
-  // Retinol Guidance
   if (q.includes('retinol') || q.includes('aging') || q.includes('wrinkle') || q.includes('squalane')) {
     appendBotMessage(`
       <p><strong>🌙 Clinical Retinol Best Practices:</strong></p>
@@ -909,7 +958,6 @@ function generateBotReply(userPrompt) {
     return;
   }
 
-  // Sunscreen Guidance
   if (q.includes('sunscreen') || q.includes('spf') || q.includes('sun') || q.includes('uv')) {
     appendBotMessage(`
       <p><strong>☀️ Sunscreen Clinical Guidelines:</strong></p>
@@ -920,7 +968,6 @@ function generateBotReply(userPrompt) {
     return;
   }
 
-  // Acne & Texture Guidance
   if (q.includes('acne') || q.includes('pimple') || q.includes('breakout') || q.includes('texture') || q.includes('pore')) {
     appendBotMessage(`
       <p><strong>✦ Clarifying Protocol:</strong></p>
@@ -931,7 +978,6 @@ function generateBotReply(userPrompt) {
     return;
   }
 
-  // Budget Guidance
   if (q.includes('budget') || q.includes('price') || q.includes('cost') || q.includes('cheap') || q.includes('expensive')) {
     appendBotMessage(`
       <p><strong>💰 Budget Flexibility:</strong></p>
@@ -940,14 +986,12 @@ function generateBotReply(userPrompt) {
     return;
   }
 
-  // Default intelligent fallback
   appendBotMessage(`
     <p>I've noted that! For your routine, remember to follow the dual AM/PM sequence: <strong>Daytime</strong> focuses on shielding with Niacinamide and SPF 50, while <strong>Nighttime</strong> focuses on cellular renewal with Retinol and rich Ceramide recovery.</p>
     <p>Feel free to ask me about ingredients, urgent Indian quick-commerce links (Blinkit/Zepto), or tap a chip to activate routine reminders!</p>
   `);
 }
 
-// Handle Chat Submission
 if (chatForm) {
   chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -957,14 +1001,12 @@ if (chatForm) {
     appendUserMessage(message);
     chatInput.value = '';
 
-    // Simulate thoughtful AI typing response
     setTimeout(() => {
       generateBotReply(message);
     }, 350);
   });
 }
 
-// Handle Suggestion Pills
 if (chatSuggestions) {
   chatSuggestions.querySelectorAll('.suggestion-pill').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -984,7 +1026,6 @@ if (chatSuggestions) {
 async function initApp() {
   updateReminderUI();
 
-  // Load Catalog from API
   try {
     const res = await fetch('/api/catalog');
     if (res.ok) {
@@ -999,13 +1040,12 @@ async function initApp() {
     console.warn('Initial catalog fetch note:', err);
   }
 
-  // Fallback to default catalog if needed
   if (!catalogData.daytime || catalogData.daytime.length === 0) {
     catalogData = defaultCatalog;
   }
 
-  // Render initial sequences and products for default mode ('day')
-  renderRoutineSequences(defaultAnalysis);
+  // Render combined sequential protocol for day and night
+  renderSequentialProtocol();
   switchMode('day');
 }
 

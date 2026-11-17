@@ -107,7 +107,7 @@
           <input id="budget" type="text" placeholder="e.g. ₹500, ₹1,500, ₹3,000, or Flexible">
         </label>
         <button id="analyse" class="btn-build-routine">
-          <span>Build My Routine →</span>
+          <span class="btn-star-icon">✦</span> <span>Generate Skincare Routine →</span>
         </button>
       </div>
     </section>
@@ -130,20 +130,20 @@
         </div>
       </div>
 
-      <!-- 3D Rotating Product Card with Light Triangle / Pedestal -->
+      <!-- 3D Rotating Product Card with Light Triangle / Pedestal (NO blur effect!) -->
       <div class="product-stage-card">
         <!-- Floating Ambient Particles -->
         <div class="stage-star star-1"></div>
         <div class="stage-star star-2"></div>
         <div class="stage-star star-3"></div>
 
-        <!-- The Light Triangle / Spotlight Cone Beam -->
+        <!-- The Light Triangle / Spotlight Cone Beam (Crisp High-Definition Vector Gradient) -->
         <div class="light-cone"></div>
 
         <!-- Orbital Dashed Rings -->
         <div class="orbital-ring"></div>
 
-        <!-- 3D Turntable Rotating Authentic Product Bottle -->
+        <!-- 3D Turntable Rotating Authentic Product Bottle (Crystal-Clear Original Image) -->
         <div class="product-rotation-wrapper">
           <img id="stage-product-img" class="rotating-bottle-3d" src="/assets/cerave-cleanser.png" alt="Featured Authentic Skincare Product">
         </div>
@@ -171,60 +171,57 @@
       </div>
     </section>
 
-    <!-- Routine Sequences Section with AM / PM Interactive Mode Switcher -->
-    <section class="result-section" id="result">
+    <!-- Combined Section 04: Structured Protocol & Verified Formulations in Sequence -->
+    <section class="protocol-section" id="routine-section">
       <div class="section-head">
         <div>
-          <p class="index-tag">04 / STRUCTURED PROTOCOLS</p>
-          <h2 class="result-main-title">Day & Night Sequence</h2>
+          <p class="index-tag">04 / STRUCTURED PROTOCOL & VERIFIED FORMULATIONS</p>
+          <h2 class="result-main-title">Sequential Skincare Protocol</h2>
+          <p class="section-lead">Step-by-step clinical routine. Every authentic product displayed in exact sequence on a 3D spotlight pedestal with instant Indian quick-commerce links.</p>
         </div>
-        <p id="analysis-status" class="analysis-status-pill">Select sequence below to inspect protocol</p>
+        <div class="header-side-meta">
+          <div class="quick-commerce-pills">
+            <span class="pill-urgent">⚡ Blinkit (10-15m)</span>
+            <span class="pill-urgent">⚡ Zepto (10m)</span>
+            <span class="pill-standard">📦 Nykaa (Authentic)</span>
+          </div>
+          <p id="analysis-status" class="analysis-status-pill">Select sequence below to inspect protocol</p>
+        </div>
       </div>
 
-      <!-- Routine Sequence Selector Tabs (Switches Both Routines & Rotating Products) -->
+      <!-- Routine Sequence Selector Tabs (AM / PM) -->
       <div class="routine-tabs" id="routine-tabs-container">
         <button type="button" class="tab-btn active" id="tab-day-btn" data-tab="day">
           <span class="tab-icon">☀️</span> DAYTIME SKINCARE ROUTINE (AM)
+          <span class="tab-badge">4 Steps</span>
         </button>
         <button type="button" class="tab-btn" id="tab-night-btn" data-tab="night">
           <span class="tab-icon">🌙</span> NIGHTTIME SKINCARE ROUTINE (PM)
+          <span class="tab-badge">3 Steps</span>
         </button>
       </div>
 
       <!-- Daytime Routine Container -->
       <div class="routine-panel active" id="day-routine-panel">
         <div class="routine-meta-bar">
-          <span class="meta-timing">☀️ ACTIVE HOURS: 07:00 – 12:00</span>
-          <span class="meta-focus">OBJECTIVE: LIPID BARRIER DEFENSE & BROAD-SPECTRUM UV PROTECTION</span>
+          <div class="meta-item"><span class="meta-icon">☀️</span> <span class="meta-label">ACTIVE HOURS:</span> <strong class="meta-timing">07:00 – 12:00</strong></div>
+          <div class="meta-item"><span class="meta-label">OBJECTIVE:</span> <span class="meta-focus">LIPID BARRIER DEFENSE & BROAD-SPECTRUM UV PROTECTION</span></div>
+          <div class="meta-item"><span class="meta-label">SEQUENCE:</span> <span class="meta-seq">Cleanse → Antioxidant Balance → Barrier Hydration → UV Shield</span></div>
         </div>
-        <div class="routine-grid" id="day-routine-grid"></div>
+        <div class="protocol-sequence-grid" id="day-sequence-grid"></div>
       </div>
 
       <!-- Nighttime Routine Container -->
       <div class="routine-panel" id="night-routine-panel">
         <div class="routine-meta-bar">
-          <span class="meta-timing">🌙 ACTIVE HOURS: 20:00 – 23:30</span>
-          <span class="meta-focus">OBJECTIVE: DEEP POLLUTION CLEARING, RETINOL RENEWAL & OVERNIGHT LIPID REBUILD</span>
+          <div class="meta-item"><span class="meta-icon">🌙</span> <span class="meta-label">ACTIVE HOURS:</span> <strong class="meta-timing">20:00 – 23:30</strong></div>
+          <div class="meta-item"><span class="meta-label">OBJECTIVE:</span> <span class="meta-focus">DEEP POLLUTION CLEARING, RETINOL RENEWAL & OVERNIGHT LIPID REBUILD</span></div>
+          <div class="meta-item"><span class="meta-label">SEQUENCE:</span> <span class="meta-seq">Purifying Cleanse → Active Retinol in Squalane → Overnight Ceramide Cream</span></div>
         </div>
-        <div class="routine-grid" id="night-routine-grid"></div>
+        <div class="protocol-sequence-grid" id="night-sequence-grid"></div>
       </div>
-    </section>
 
-    <!-- Rotating Authentic Product Formulations with Quick Commerce -->
-    <section class="catalog-section" id="catalog-section">
-      <div class="section-head">
-        <div>
-          <p class="index-tag">05 / VERIFIED FORMULATIONS</p>
-          <h2 id="catalog-heading">Daytime Recommended Formulations</h2>
-        </div>
-        <div class="quick-commerce-pills">
-          <span class="pill-urgent">⚡ Blinkit (10-15m)</span>
-          <span class="pill-urgent">⚡ Zepto (10m)</span>
-          <span class="pill-standard">📦 Nykaa (Authentic)</span>
-        </div>
-      </div>
-      <div class="product-grid" id="product-grid"></div>
-      <p class="catalog-note">Every formulation rotates in real-time 3D. Click "Shop Options" on any card for instant 10-minute delivery via Blinkit & Zepto, or standard delivery via Nykaa.</p>
+      <p class="catalog-note">All formulations are 100% authentic original packshots. Click "Shop Options" on any step for instant 10-minute delivery via Blinkit & Zepto, or verified delivery via Nykaa.</p>
     </section>
 
     <!-- Clinical Safety Boundary -->

@@ -572,7 +572,7 @@ button, input, select {
   opacity: 0.4;
 }
 
-/* The Light Triangle / Spotlight Cone Beam */
+/* The Light Triangle / Spotlight Cone Beam (Vector Gradient, NO filter: blur!) */
 .light-cone {
   position: absolute;
   bottom: 80px;
@@ -580,10 +580,9 @@ button, input, select {
   transform: translateX(-50%);
   width: 250px;
   height: 330px;
-  background: linear-gradient(to top, rgba(200, 230, 255, 0.28) 0%, rgba(160, 205, 255, 0.12) 45%, rgba(130, 180, 240, 0.0) 100%);
+  background: linear-gradient(to top, rgba(200, 230, 255, 0.28) 0%, rgba(160, 205, 255, 0.1) 45%, rgba(130, 180, 240, 0.0) 100%);
   clip-path: polygon(24% 0%, 76% 0%, 100% 100%, 0% 100%);
   pointer-events: none;
-  filter: blur(5px);
   z-index: 2;
 }
 
@@ -614,32 +613,29 @@ button, input, select {
   perspective: 900px;
 }
 
-/* Continuous 3D Turntable Spin Animation (APPLIED TO ALL PRODUCTS) */
+/* Continuous 3D Turntable Animation (Crystal-Clear Original Image, NO blur!) */
 .rotating-bottle-3d {
-  max-width: 140px;
-  max-height: 230px;
+  max-width: 150px;
+  max-height: 240px;
   object-fit: contain;
-  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 20px rgba(180, 215, 255, 0.35));
-  animation: rotate-turntable 7.5s linear infinite;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
+  animation: rotate-turntable-crisp 7s ease-in-out infinite;
   transform-style: preserve-3d;
+  backface-visibility: hidden;
   will-change: transform;
 }
 
-@keyframes rotate-turntable {
+@keyframes rotate-turntable-crisp {
   0% {
-    transform: translateY(0px) rotateY(0deg);
-  }
-  25% {
-    transform: translateY(-5px) rotateY(90deg) scale(0.97);
+    transform: translateY(0px) rotateY(-18deg) scale(1);
   }
   50% {
-    transform: translateY(-9px) rotateY(180deg);
-  }
-  75% {
-    transform: translateY(-5px) rotateY(270deg) scale(0.97);
+    transform: translateY(-8px) rotateY(18deg) scale(1.02);
   }
   100% {
-    transform: translateY(0px) rotateY(360deg);
+    transform: translateY(0px) rotateY(-18deg) scale(1);
   }
 }
 
@@ -788,26 +784,53 @@ button, input, select {
    DUAL AM / PM ROUTINES SECTION
    ========================================================================== */
 
-.result-section {
-  padding: 56px 48px;
+/* ==========================================================================
+   COMBINED PROTOCOL & VERIFIED FORMULATIONS SECTION (SEQUENTIAL)
+   ========================================================================== */
+
+.protocol-section {
+  padding: 64px 48px;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-surface);
 }
 
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-  gap: 16px;
+.section-lead {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin-top: 6px;
+  line-height: 1.6;
 }
 
-.result-main-title, .section-head h2 {
-  font-size: 32px;
-  font-weight: 500;
-  letter-spacing: -1.8px;
-  color: var(--silver-100);
+.header-side-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.quick-commerce-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill-urgent {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+.pill-standard {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: var(--silver-400);
 }
 
 .analysis-status-pill {
@@ -854,6 +877,14 @@ button, input, select {
   border-color: #ffffff;
   box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
 }
+.tab-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  margin-left: 4px;
+}
 
 .routine-panel {
   display: none;
@@ -866,277 +897,293 @@ button, input, select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 18px;
-  border-radius: 10px;
+  padding: 14px 20px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-subtle);
-  margin-bottom: 22px;
+  margin-bottom: 24px;
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: var(--silver-500);
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  color: var(--silver-400);
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.meta-label {
+  color: var(--silver-500);
 }
 .meta-timing {
+  color: var(--silver-200);
+}
+.meta-focus {
+  color: var(--silver-200);
+}
+.meta-seq {
   color: var(--silver-300);
 }
 
-.routine-grid {
+/* Sequential Grid: Shows cards in strict skincare routine order (1 -> 2 -> 3 -> 4) */
+.protocol-sequence-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-}
-
-.routine-step-card {
-  padding: 24px;
-  border-radius: 18px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  flex-direction: column;
-  transition: all 0.25s ease;
-}
-.routine-step-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-medium);
-  transform: translateY(-2px);
-}
-
-.routine-card-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.step-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--silver-500);
-}
-.time-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  padding: 3px 8px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--silver-300);
-  letter-spacing: 1px;
-}
-
-.routine-step-card h3 {
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.6px;
-  color: var(--silver-100);
-  margin-bottom: 10px;
-}
-
-.routine-step-card p {
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--text-secondary);
-  margin-bottom: 18px;
-}
-
-.routine-product-pick {
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.routine-product-pick small {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--silver-400);
-}
-.btn-card-shop {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--silver-100);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 4px 0;
-}
-.btn-card-shop:hover {
-  color: #ffffff;
-}
-
-/* ==========================================================================
-   PRODUCT CATALOG WITH 3D ROTATION ON EVERY PRODUCT
-   ========================================================================== */
-
-.catalog-section {
-  padding: 56px 48px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-deep);
-}
-
-.quick-commerce-pills {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.pill-urgent {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  padding: 5px 10px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-}
-.pill-standard {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  padding: 5px 10px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
-  color: var(--silver-400);
-}
-
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 26px;
   margin-top: 24px;
 }
 
-/* Card with miniature 3D spotlight cone & rotating authentic bottle */
-.product-card {
-  border-radius: 20px;
+/* Individual Protocol Step Card */
+.protocol-step-card {
+  position: relative;
+  border-radius: 24px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  padding: 22px 18px 18px;
+  padding: 24px 22px 20px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
-.product-card:hover {
+
+.protocol-step-card:hover {
   border-color: var(--border-medium);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(180, 215, 255, 0.05);
 }
 
-.card-top-bar {
+/* Step Header */
+.card-step-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
-.p-category {
+
+.step-num-pill {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.step-num-pill .num {
   font-family: 'DM Mono', monospace;
-  font-size: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--silver-100);
+  line-height: 1;
+}
+.step-num-pill .step-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
   color: var(--silver-500);
   text-transform: uppercase;
-}
-.p-match {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--silver-300);
+  margin-top: 2px;
 }
 
-/* Miniature 3D Stage with spotlight cone & pedestal */
-.product-3d-stage {
+.step-meta-titles {
+  flex: 1;
+  min-width: 0;
+}
+.step-phase {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--silver-400);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+.step-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--silver-100);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-match-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--silver-200);
+  white-space: nowrap;
+}
+
+/* 3D Pedestal Stage inside Card (Crystal Sharp Vector Spotlight, NO blur!) */
+.step-product-stage {
   position: relative;
-  height: 200px;
+  height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
   perspective: 900px;
   overflow: hidden;
-  border-radius: 14px;
-  background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.04) 0%, rgba(8, 10, 15, 0.9) 75%);
-  margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  background: radial-gradient(circle at 50% 55%, rgba(255, 255, 255, 0.05) 0%, #0c0f16 75%);
+  margin-bottom: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.stage-mini-cone {
+.stage-cone-beam {
   position: absolute;
-  bottom: 18px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 150px;
-  height: 150px;
+  width: 170px;
+  height: 170px;
   background: linear-gradient(to top, rgba(200, 230, 255, 0.22) 0%, rgba(160, 205, 255, 0.06) 50%, transparent 100%);
   clip-path: polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%);
   pointer-events: none;
-  filter: blur(2px);
+  z-index: 2;
 }
 
-.stage-mini-pedestal {
+.stage-pedestal-platform {
   position: absolute;
-  bottom: 12px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
-  width: 110px;
-  height: 22px;
+  width: 125px;
+  height: 26px;
   border-radius: 50%;
   background: radial-gradient(ellipse at center, #ffffff 0%, #ccd8e8 40%, #566882 75%, transparent 100%);
-  box-shadow: 0 0 20px rgba(200, 230, 255, 0.45);
+  box-shadow: 0 0 24px rgba(200, 230, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.6);
+  z-index: 3;
 }
 
-.product-3d-stage img.rotating-bottle-3d {
-  max-height: 140px;
-  max-width: 115px;
+.stage-packshot-wrapper {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
-.product-card h3 {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  color: var(--silver-100);
-  margin-bottom: 6px;
+.crisp-product-img {
+  max-height: 160px;
+  max-width: 120px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.7));
+  animation: rotate-turntable-crisp 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
-.product-card p {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-  margin-bottom: 16px;
+/* Card Content: Title, Price, Guidance, Tips */
+.step-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
-.product-card-bottom {
-  margin-top: auto;
+.product-identity {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.product-name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--silver-100);
+  margin: 0;
+}
+.product-price-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--silver-200);
+  white-space: nowrap;
+}
+
+.product-clinical-guidance {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.step-usage-tips {
+  background: rgba(255, 255, 255, 0.025);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--silver-300);
+}
+.tip-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-actions {
+  margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
-.p-price {
-  font-family: 'DM Mono', monospace;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--silver-100);
-}
 
-.btn-open-stores {
-  display: inline-flex;
+/* Liquid Silver Shop Options Button */
+.btn-step-shop {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  padding: 12px 16px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--silver-100);
   font-family: 'DM Mono', monospace;
   font-size: 11px;
-  color: var(--silver-200);
+  letter-spacing: 0.6px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
-.btn-open-stores:hover {
+.btn-step-shop:hover {
   background: var(--silver-200);
   color: #07090e;
   border-color: #ffffff;
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+.shop-arrow {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+.btn-step-shop:hover .shop-arrow {
+  transform: translateX(3px);
 }
 
 .catalog-note {
