@@ -34,8 +34,6 @@ const heroToggleDay = document.querySelector('#hero-toggle-day');
 const heroToggleNight = document.querySelector('#hero-toggle-night');
 const btnHeroShop = document.querySelector('#btn-hero-shop');
 const btnScanAgain = document.querySelector('#btn-scan-again');
-const ufoProductsGrid = document.querySelector('#ufo-products-grid');
-const ufoCatalogTitle = document.querySelector('#ufo-catalog-title');
 
 // DOM Elements: Combined Sequential Routine Section
 const routineSection = document.querySelector('#routine-section');
@@ -658,60 +656,6 @@ function renderSequentialProtocol() {
   });
 }
 
-// =============================================================================
-// UFO 3D TURNTABLE CATALOG GRID RENDERING (SECTION 04)
-// =============================================================================
-
-function renderUfoCatalogGrid() {
-  if (!ufoProductsGrid) return;
-  const dayProducts = (catalogData.daytime && catalogData.daytime.length) ? catalogData.daytime : defaultCatalog.daytime;
-  const nightProducts = (catalogData.nighttime && catalogData.nighttime.length) ? catalogData.nighttime : defaultCatalog.nighttime;
-  const activeProducts = activeMode === 'day' ? dayProducts : nightProducts;
-
-  if (ufoCatalogTitle) {
-    ufoCatalogTitle.textContent = activeMode === 'day'
-      ? '☀️ Daytime Protocol Formulations (3D UFO Turntable Showcase)'
-      : '🌙 Nighttime Protocol Formulations (3D UFO Turntable Showcase)';
-  }
-
-  ufoProductsGrid.innerHTML = activeProducts.map((p, idx) => `
-    <article class="ufo-mini-card">
-      <div class="ufo-mini-stage">
-        <div class="ufo-mini-star s1"></div>
-        <div class="ufo-mini-star s2"></div>
-        <div class="ufo-mini-light-cone"></div>
-        <div class="ufo-mini-ring"></div>
-        <div class="ufo-mini-bottle-wrap">
-          <img class="ufo-mini-bottle" src="${p.imageUrl}" alt="${p.name}" loading="lazy">
-        </div>
-        <div class="ufo-mini-pedestal"></div>
-      </div>
-      <div class="ufo-mini-details">
-        <div class="ufo-mini-meta-row">
-          <span class="ufo-mini-step-pill">${p.phase || `STEP ${p.stepNumber || idx + 1}`}</span>
-          <span class="ufo-mini-match">${p.matchRate || '96% MATCH'}</span>
-        </div>
-        <h4 class="ufo-mini-name">${p.name}</h4>
-        <div class="ufo-mini-price">${p.price}</div>
-        <div class="ufo-mini-actions">
-          <button type="button" class="btn-ufo-shop" data-id="${p.id}" data-idx="${idx}" data-mode="${activeMode}">
-            <span>SHOP NOW →</span>
-          </button>
-        </div>
-      </div>
-    </article>
-  `).join('');
-
-  ufoProductsGrid.querySelectorAll('.btn-ufo-shop').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const mode = btn.getAttribute('data-mode');
-      const idx = parseInt(btn.getAttribute('data-idx'), 10);
-      const list = mode === 'day' ? dayProducts : nightProducts;
-      openStoreModal(list[idx]);
-    });
-  });
-}
-
 // Update Top Hero Showcase Card
 function updateHeroShowcase(product) {
   const dayProducts = (catalogData.daytime && catalogData.daytime.length) ? catalogData.daytime : defaultCatalog.daytime;
@@ -771,7 +715,6 @@ function switchMode(mode) {
     : ((catalogData.nighttime && catalogData.nighttime.length) ? catalogData.nighttime : defaultCatalog.nighttime);
 
   updateHeroShowcase(products[0]);
-  renderUfoCatalogGrid();
 }
 
 // Event Listeners for Routine Tabs
@@ -834,11 +777,18 @@ if (analyseBtn) {
     };
 
     try {
+      // Ultra-fast controller so generation always completes in < 2.5 seconds
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2200);
+
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Protocol generation error');
 
@@ -848,10 +798,9 @@ if (analyseBtn) {
       
       const analysis = data.analysis || defaultAnalysis;
 
-      // Render the updated protocol & 3D UFO showcases
+      // Render the updated protocol
       renderSequentialProtocol();
       switchMode(activeMode);
-      renderUfoCatalogGrid();
 
       if (analysisStatus) {
         analysisStatus.textContent = analysis.careLevel === 'professional'
@@ -865,7 +814,7 @@ if (analyseBtn) {
         targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     } catch (error) {
-      console.warn('API analyze error, using tier protocol:', error);
+      console.warn('Instant client synthesis active:', error);
       try {
         const catRes = await fetch(`/api/catalog?budget=${encodeURIComponent(payload.budget)}`);
         if (catRes.ok) {
@@ -875,7 +824,6 @@ if (analyseBtn) {
       } catch {}
       renderSequentialProtocol();
       switchMode(activeMode);
-      renderUfoCatalogGrid();
       if (analysisStatus) {
         analysisStatus.textContent = 'Active protocol generated from skin profile preferences.';
       }

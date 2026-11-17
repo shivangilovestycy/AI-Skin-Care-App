@@ -11,7 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="ambient-glow"></div>
+  <!-- Fixed Full-Screen Liquid Chrome Background -->
+  <div class="fixed-chrome-bg" aria-hidden="true">
+    <div class="chrome-bg-layer"></div>
+    <div class="chrome-bg-overlay"></div>
+  </div>
   
   <main class="app-shell">
     <!-- Top System Bar -->
@@ -178,12 +182,6 @@
         </div>
         <div class="protocol-sequence-grid" id="night-sequence-grid"></div>
       </div>
-
-      <div class="routine-jump-cta">
-        <a href="#showcase-view" class="btn-jump-showcase">
-          <span>Inspect Products in 3D UFO Turntable Showcase ↓</span>
-        </a>
-      </div>
     </section>
 
     <!-- Section 04: Product Page with 3D UFO Light Turntable (Matching Reference Image) -->
@@ -242,15 +240,6 @@
         <button id="btn-scan-again" type="button" class="btn-glass-scan">
           <span>↺ SCAN AGAIN</span>
         </button>
-      </div>
-
-      <!-- Grid of all Recommended Formulations Rotating in 3D under UFO Lights -->
-      <div class="ufo-catalog-block">
-        <div class="ufo-catalog-header">
-          <h3 class="ufo-catalog-title" id="ufo-catalog-title">All Protocol Formulations (3D UFO Turntable)</h3>
-          <p class="ufo-catalog-sub">Every authentic formulation rotating under its individual spotlight beam. Tap "Shop Options" for instant 10-15 minute Indian delivery.</p>
-        </div>
-        <div class="ufo-grid" id="ufo-products-grid"></div>
       </div>
 
       <p class="catalog-note">All formulations are 100% authentic original packshots. Click "Shop Options" on any step for instant 10-minute delivery via Blinkit & Zepto, or verified delivery via Nykaa.</p>
